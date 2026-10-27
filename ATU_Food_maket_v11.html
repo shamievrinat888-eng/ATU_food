@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ATU Food — макет приложения (v5)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap">
+<style>
+:root{--bg:#F7F8FA;--fg:#14214D;--mut:#5B6585;--card:#fff;--line:#E3E6EE;--acc:#1B3A9E;--soft:#E9EDFA;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0E1530;--fg:#EEF1FA;--mut:#A3ACC8;--line:#26305A;--card:#16204A;--soft:#1B2757}}
+:root[data-theme="dark"]{--bg:#0E1530;--fg:#EEF1FA;--mut:#A3ACC8;--line:#26305A;--card:#16204A;--soft:#1B2757}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--fg);font-family:Montserrat,system-ui,sans-serif;font-weight:400;line-height:1.4}
+h1,h2,h3,b,.m{font-weight:500}
+header.top{padding:20px 16px 8px;max-width:1240px;margin:auto}
+header.top h1{font-size:22px}
+header.top p{color:var(--mut);font-size:13px;margin-top:4px}
+nav{display:flex;gap:8px;padding:12px 16px;position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:5;max-width:1240px;margin:auto;overflow-x:auto}
+nav button{font:inherit;font-weight:500;font-size:13px;padding:9px 16px;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--fg);white-space:nowrap;cursor:pointer}
+nav button.on{background:#1B3A9E;border-color:#1B3A9E;color:#fff}
+
+/* ---------- просмотрщик ---------- */
+.row{display:none;padding:4px 16px 28px;max-width:1240px;margin:auto}
+.row.on{display:block}
+.row>.item{display:none}
+.gbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:4px 0 14px}
+.gbar button{font:inherit;font-size:12px;font-weight:500;padding:7px 13px;border-radius:99px;border:1px solid var(--line);background:var(--card);color:var(--fg);cursor:pointer}
+.gbar button.on{background:#F3DD2C;border-color:#F3DD2C;color:#14214D}
+.gbar .ovb{margin-left:auto;background:transparent}
+.vgrid{display:grid;grid-template-columns:210px 1fr;gap:22px;align-items:start}
+.list{position:sticky;top:64px;max-height:calc(100vh - 80px);overflow:auto;padding-right:4px}
+.list .gh{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);margin:14px 0 5px 6px}
+.list .gh:first-child{margin-top:0}
+.list button{display:flex;gap:9px;align-items:center;width:100%;text-align:left;font:inherit;font-size:12.5px;color:var(--fg);background:transparent;border:0;padding:7px 8px;border-radius:12px;cursor:pointer}
+.list button i{flex:none;width:22px;height:22px;border-radius:50%;background:var(--soft);display:grid;place-items:center;font-style:normal;font-size:10.5px;font-weight:500}
+.list button:hover{background:var(--soft)}
+.list button.on{background:#1B3A9E;color:#fff}
+.list button.on i{background:#F3DD2C;color:#14214D}
+.list .bd,.vhead .bd{font-size:9px;font-weight:500;border-radius:99px;padding:2px 7px;background:#F3DD2C;color:#14214D;white-space:nowrap;margin-left:auto}
+.vhead .bd{margin-left:0;font-size:10.5px;padding:3px 10px}
+.vhead{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.vhead .num{font-size:12px;color:var(--mut)}
+.vhead h2{font-size:20px}
+.content{display:flex;gap:26px;flex-wrap:wrap;align-items:flex-start}
+.stage{flex:none;display:flex;justify-content:center;touch-action:pan-y}
+.desc{flex:1;min-width:270px;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:20px 22px}
+.desc .lead{font-size:14px;color:var(--fg);margin-bottom:6px}
+.desc h4{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);font-weight:500;margin:16px 0 6px}
+.desc ul{padding-left:18px}.desc li{font-size:13px;color:var(--fg);margin:5px 0}
+.desc p.n{font-size:13px;color:var(--mut)}
+.desc .chg{background:#FFF6C2;color:#14214D;border-radius:14px;padding:10px 12px;font-size:12.5px;margin-top:14px}
+:root[data-theme="dark"] .desc .chg{background:#3A3510;color:#F5EEB5}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .desc .chg{background:#3A3510;color:#F5EEB5}}
+.pn{display:flex;gap:10px;margin-top:16px;align-items:center}
+.pn button{font:inherit;font-weight:500;font-size:13px;padding:10px 20px;border-radius:99px;border:1px solid var(--line);background:var(--card);color:var(--fg);cursor:pointer}
+.pn button.nx{background:#1B3A9E;border-color:#1B3A9E;color:#fff}
+.pn button:disabled{opacity:.35;cursor:default}
+.pn span{font-size:12px;color:var(--mut);margin-left:auto}
+.dots{display:flex;gap:5px;margin:0 auto 0 8px;flex-wrap:wrap}
+.dots i{width:7px;height:7px;border-radius:50%;background:var(--line)}.dots i.on{background:#1B3A9E;width:20px;border-radius:9px}
+.ov{display:none;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px}
+.ov.on{display:grid}
+.ov .oc{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:12px;cursor:pointer;overflow:hidden}
+.ov .oc:hover{border-color:#1B3A9E}
+.ov .oc .pv{display:flex;justify-content:center;pointer-events:none;overflow:hidden}
+.ov .oc b{display:block;font-size:12px;margin-top:8px}
+.ov .oc span{font-size:11px;color:var(--mut)}
+.ov .oc.wd{grid-column:span 2}
+.vgrid.off{display:none}
+@media (max-width:860px){
+ .vgrid{display:block}
+ .list{position:static;max-height:none;display:flex;gap:6px;overflow-x:auto;padding:0 0 12px}
+ .list .gh{display:none}
+ .list button{width:auto;flex:none;white-space:nowrap}
+ .list .bd{display:none}
+ .stage{width:100%}
+ .desc{padding:16px}
+}
+
+/* ---------- экраны (макеты) ---------- */
+.phone{width:262px;height:540px;border-radius:34px;border:6px solid #14214D;background:#F7F8FA;overflow:hidden;position:relative;font-size:11px;color:#14214D;flex:none}
+.scr{padding:14px 14px 70px;height:100%;overflow:hidden;position:relative}
+.blue{background:#1B3A9E;color:#fff}
+.sun{position:absolute;width:110px;height:110px;border-radius:50%;background:#F3DD2C}
+.pill{border-radius:99px}
+.btn{display:block;text-align:center;background:#F3DD2C;color:#14214D;font-weight:500;padding:12px;border-radius:99px;font-size:12px}
+.card{background:#fff;border-radius:18px;padding:10px}
+.row2{display:flex;align-items:center;gap:8px}
+.sp{flex:1}
+.ph{aspect-ratio:1;border-radius:18px;background:#FFF3C4;display:grid;place-items:center;font-size:44px;position:relative;overflow:hidden}
+.ph.b2{background:#DCE4FB}.ph.b3{background:#E3F4E1}
+.plus{position:absolute;right:7px;bottom:7px;width:26px;height:26px;border-radius:50%;background:#F3DD2C;display:grid;place-items:center;font-size:16px;font-weight:500;font-style:normal}
+.out::after{content:"Закончилось";position:absolute;inset:0;background:rgba(247,248,250,.78);display:grid;place-items:center;font-size:11px;font-weight:500}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid h4{font-weight:500;font-size:12px;margin-top:5px}
+.grid span{color:#5B6585}
+.cir{width:28px;height:28px;border-radius:50%;background:#F7F8FA;border:1px solid #E3E6EE;display:grid;place-items:center;font-size:13px;flex:none}
+.cat{width:54px;flex:none;text-align:center;padding:8px 0;border-radius:16px;background:#fff;font-size:9.5px}
+.cat i{display:block;font-style:normal;font-size:18px}
+.cat.on{background:#1B3A9E;color:#fff}
+.float{position:absolute;left:14px;right:14px;bottom:14px;background:#1B3A9E;color:#fff;border-radius:99px;padding:13px 16px;font-weight:500;display:flex;justify-content:space-between}
+.chip{padding:8px 12px;border-radius:99px;background:#fff;border:1px solid #E3E6EE;font-weight:500}
+.chip.on{background:#1B3A9E;border-color:#1B3A9E;color:#fff}
+.chip.off{color:#A9B0C4;text-decoration:line-through;background:#EEF0F5}
+.tg{width:34px;height:20px;border-radius:99px;background:#CBD2E3;position:relative;flex:none}
+.tg::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff}
+.tg.on{background:#1D5C1A}.tg.on::after{left:16px}
+.h{font-size:18px;font-weight:500;margin:10px 0}
+.ok{background:#E3F4E1;color:#1D5C1A;font-weight:500;border-radius:99px;padding:5px 10px;display:inline-block}
+.warn{background:#FFF6C2;border-radius:99px;padding:5px 10px;display:inline-block;font-weight:500}
+.ticket{background:#1B3A9E;color:#fff;border-radius:22px;padding:16px;position:relative;overflow:hidden}
+.ticket .n{font-size:46px;font-weight:500;color:#F3DD2C;line-height:1.1}
+.ticket .sun{width:80px;height:80px;right:-20px;bottom:-20px}
+.seg{display:flex;background:#fff;border-radius:99px;padding:3px;border:1px solid #E3E6EE}
+.seg b{flex:1;text-align:center;padding:8px;border-radius:99px}
+.seg b.on{background:#1B3A9E;color:#fff}
+.in{background:rgba(255,255,255,.14);border-radius:16px;padding:12px;color:#CFD8F5;margin-bottom:8px}
+.in.s{padding:9px 12px;margin-bottom:6px}
+.in.w{background:#fff;color:#8A93AE;border:1px solid #E3E6EE}
+.steps{display:flex;gap:4px;margin:10px 0}
+.steps i{flex:1;height:5px;border-radius:9px;background:#DCE1EE}
+.steps i.d{background:#1D5C1A}
+.tag{font-size:9px;background:#DCE4FB;color:#1B3A9E;border-radius:99px;padding:2px 7px;font-weight:500}
+.g{color:#1D5C1A;font-weight:500}.r{color:#A32D2D;font-weight:500}
+.sm{padding:9px;font-size:11px}
+.btn.o{background:#1B3A9E;color:#fff}
+.btn.l{background:#E3F4E1;color:#1D5C1A}
+.step{width:48px;text-align:center;border-radius:99px;background:#F7F8FA;padding:4px;font-weight:500}
+.adm{width:660px;height:430px;border-radius:18px;border:6px solid #14214D;background:#F7F8FA;overflow:hidden;display:flex;color:#14214D;font-size:11px;flex:none}
+.side{width:150px;background:#1B3A9E;color:#fff;padding:14px;position:relative;overflow:hidden;flex:none}
+.side div{padding:7px 8px;border-radius:99px;margin-top:3px}
+.side div.on{background:#F3DD2C;color:#14214D;font-weight:500}
+.main{flex:1;padding:14px;overflow:hidden}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0}
+.kpis div{background:#fff;border-radius:16px;padding:10px}
+.kpis b{display:block;font-size:17px}
+.bar{height:9px;border-radius:99px;background:#DCE4FB;margin-top:4px}
+.bar i{display:block;height:100%;border-radius:99px;background:#1B3A9E}
+.doc{display:none;padding:8px 16px 24px;max-width:780px;margin:auto}.doc.on{display:block}
+.doc h3{font-size:16px;margin:20px 0 6px}.doc p,.doc li{font-size:13px;color:var(--mut)}.doc li{margin:4px 0}.doc ul{padding-left:18px}.doc b{color:var(--fg)}
+.doc pre{background:#14214D;color:#EEF1FA;border-radius:16px;padding:12px;font-size:11px;overflow-x:auto;line-height:1.5}
+.doc table{width:100%;border-collapse:collapse;font-size:12px}.doc td,.doc th{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left;color:var(--fg);vertical-align:top;font-weight:400}.doc th{font-weight:500}.tw{overflow-x:auto}
+.col{flex:1;background:#E9ECF4;border-radius:16px;padding:8px}.col>b{display:block;margin-bottom:6px}.kc{background:#fff;border-radius:12px;padding:8px;margin-bottom:6px;line-height:1.5}
+.tb{width:100%;border-collapse:collapse}.tb td,.tb th{padding:7px 6px;border-bottom:1px solid #E3E6EE;text-align:left;font-weight:400}.tb th{font-weight:500;color:#5B6585}
+.note{margin:0 auto 24px;max-width:1208px;padding:14px;border-radius:18px;border:1px solid var(--line);font-size:13px;color:var(--mut)}
+/* новые элементы экранов */
+.cb{width:16px;height:16px;border-radius:5px;background:#F3DD2C;color:#14214D;display:grid;place-items:center;font-size:10px;flex:none;font-weight:600}
+.cb.e{background:transparent;border:1.5px solid #8A93AE}
+.lnk{color:#F3DD2C;font-weight:500;text-decoration:underline}
+.code{display:flex;gap:6px;margin:12px 0}
+.code i{flex:1;height:44px;border-radius:12px;background:#fff;border:1px solid #E3E6EE;display:grid;place-items:center;font-style:normal;font-size:18px;font-weight:500}
+.code i.f{border:2px solid #1B3A9E}
+.fld{display:flex;align-items:center;background:#fff;border:2px solid #1B3A9E;border-radius:14px;padding:7px 12px;flex:1}
+.fld .car{display:inline-block;width:2px;height:18px;background:#1B3A9E;margin-left:2px}
+.mini{padding:6px 10px;font-size:10.5px}
+.req{display:flex;gap:7px;align-items:center;margin:4px 0;font-size:10.5px}
+.req i{font-style:normal;width:15px;height:15px;border-radius:50%;background:#E3F4E1;color:#1D5C1A;display:grid;place-items:center;font-size:9px;font-weight:600;flex:none}
+.req i.n{background:#EEF0F5;color:#8A93AE}
+.rc{background:#fff;border-radius:16px;padding:11px 12px;font-size:10px;line-height:1.35;position:relative}
+.rc .c{text-align:center}
+.rc hr{border:0;border-top:1px dashed #C9CFE0;margin:4px 0}
+.rc .l{display:flex;justify-content:space-between;gap:6px;margin:1.5px 0}
+.rc .l span:first-child{color:#5B6585}
+.rc .l.t{font-size:13px;margin:4px 0}.rc .l.t span:first-child{color:#14214D;font-weight:500}
+.rc .l.i span:first-child{color:#14214D}
+.qr{width:46px;height:46px;flex:none}
+.pf{width:62px;height:62px;border-radius:50%;background:#F3DD2C;display:grid;place-items:center;font-size:20px;font-weight:500;margin:0 auto}
+.mr{display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid #EEF0F5}
+.mr:last-child{border:0}
+.mr .ic{width:24px;height:24px;border-radius:50%;background:#F7F8FA;display:grid;place-items:center;font-size:12px;flex:none}
+.mr .v{color:#5B6585}
+</style>
+</head>
+<body>
+<header class="top"><h1>ATU Food — как будет выглядеть</h1><p>Выберите экран слева (или нажимайте «Дальше»). У каждого экрана справа есть пояснение. Фото блюд пока эмодзи, в приложении будут ваши фото.</p></header>
+<nav id="tabs"><button class="on" data-t="s">Студент</button><button data-t="w">Сотрудник</button><button data-t="a">Админ</button><button data-t="d">Как сделаем</button></nav>
+
+<!-- STUDENT -->
+<section class="row on" id="s">
+
+<div class="item" data-g="Вход и аккаунт" data-title="Вход" data-badge="Изменён">
+<div class="phone fr"><div class="scr blue">
+<div class="sun" style="right:-30px;bottom:-30px;width:150px;height:150px"></div>
+<div style="font-size:30px;font-weight:500;margin:120px 0 24px;position:relative">ATU Food</div>
+<div class="in" style="position:relative">Почта @gmail.com</div><div class="in" style="position:relative;margin-bottom:6px">Пароль</div>
+<p style="text-align:right;position:relative" class="lnk">Забыли пароль?</p>
+<div class="btn" style="margin-top:14px;position:relative">Войти</div>
+<p style="text-align:center;margin-top:14px;color:#CFD8F5;position:relative">Нет аккаунта? <span class="lnk">Создать аккаунт</span></p>
+</div></div>
+<div class="d"><p class="lead">Первый экран приложения. Вход по почте и паролю.</p>
+<h4>На экране</h4><ul><li>Поле «Почта» — принимаются адреса вида @gmail.com</li><li>Поле «Пароль»</li><li>Ссылка «Забыли пароль?» — открывает восстановление</li><li>Ссылка «Создать аккаунт» — открывает регистрацию</li></ul>
+<h4>Что дальше</h4><p class="n">После входа открывается интерфейс по роли: студент сразу попадает в меню, сотрудник — кассу или кухню.</p>
+<div class="chg"><b>Что изменилось:</b> «Забыли пароль?» и «Создать аккаунт» теперь две отдельные заметные ссылки.</div></div></div>
+
+<div class="item" data-g="Вход и аккаунт" data-title="Создать аккаунт" data-badge="Новый">
+<div class="phone fr"><div class="scr blue">
+<div class="sun" style="right:-40px;bottom:-40px;width:130px;height:130px"></div>
+<div class="row2" style="position:relative"><span class="cir" style="background:rgba(255,255,255,.16);border:0;color:#fff">←</span></div>
+<div style="font-size:21px;font-weight:500;margin:10px 0 3px;position:relative">Создать аккаунт</div>
+<p style="color:#CFD8F5;margin-bottom:10px;position:relative">Для студентов и сотрудников ATU</p>
+<div class="row2" style="gap:6px;position:relative"><div class="in s sp">Имя</div><div class="in s sp">Фамилия</div></div>
+<div class="in s" style="position:relative">Почта @gmail.com</div>
+<div class="in s" style="position:relative">Пароль · минимум 8 символов</div>
+<div class="in s" style="position:relative">Повторите пароль</div>
+<div class="row2" style="gap:8px;margin:10px 0;position:relative;align-items:flex-start"><span class="cb">✓</span><span style="color:#CFD8F5;font-size:10px">Согласен с правилами сервиса и обработкой персональных данных</span></div>
+<div class="btn" style="position:relative">Зарегистрироваться</div>
+<p style="text-align:center;margin-top:10px;color:#CFD8F5;position:relative">Уже есть аккаунт? <span class="lnk">Войти</span></p>
+</div></div>
+<div class="d"><p class="lead">Регистрация нового студента. Один экран, пять полей.</p>
+<h4>На экране</h4><ul><li>Имя и фамилия — нужны, чтобы кассир мог назвать заказ</li><li>Почта @gmail.com — на неё придёт код подтверждения</li><li>Пароль и повтор пароля</li><li>Галочка согласия с правилами и обработкой персональных данных (без неё кнопка не нажимается)</li></ul>
+<h4>Что дальше</h4><p class="n">После нажатия «Зарегистрироваться» на почту уходит код — открывается экран подтверждения почты.</p></div></div>
+
+<div class="item" data-g="Вход и аккаунт" data-title="Подтверждение почты" data-badge="Новый">
+<div class="phone fr"><div class="scr">
+<div class="row2" style="margin-top:6px"><span class="cir">←</span></div>
+<div style="font-size:44px;margin-top:22px;text-align:center">✉️</div>
+<div class="h" style="text-align:center">Подтвердите почту</div>
+<p style="text-align:center;color:#5B6585">Мы отправили 6-значный код на<br><b style="color:#14214D">almiri.u@gmail.com</b></p>
+<div class="code" style="margin-top:20px"><i>4</i><i>7</i><i>2</i><i class="f"></i><i></i><i></i></div>
+<p style="text-align:center;color:#5B6585">Отправить код ещё раз через 0:42</p>
+<div class="btn" style="position:absolute;left:14px;right:14px;bottom:16px">Подтвердить</div>
+</div></div>
+<div class="d"><p class="lead">Проверка, что почта настоящая и принадлежит человеку.</p>
+<h4>На экране</h4><ul><li>Адрес, на который ушёл код</li><li>Шесть ячеек для кода, курсор переходит сам</li><li>Таймер «Отправить код ещё раз» — через минуту кнопка станет активной</li></ul>
+<h4>Что дальше</h4><p class="n">Код верный — аккаунт создан, студент сразу попадает в меню, где сверху выбирает корпус.</p></div></div>
+
+<div class="item" data-g="Вход и аккаунт" data-title="Забыли пароль" data-badge="Новый">
+<div class="phone fr"><div class="scr blue">
+<div class="sun" style="right:-30px;bottom:-30px;width:150px;height:150px"></div>
+<div class="row2" style="position:relative"><span class="cir" style="background:rgba(255,255,255,.16);border:0;color:#fff">←</span></div>
+<div style="font-size:44px;margin-top:40px;position:relative">🔑</div>
+<div style="font-size:21px;font-weight:500;margin:10px 0 4px;position:relative">Забыли пароль?</div>
+<p style="color:#CFD8F5;margin-bottom:16px;position:relative">Введите почту, мы отправим код для восстановления доступа</p>
+<div class="in" style="position:relative">Почта @gmail.com</div>
+<div class="btn" style="margin-top:12px;position:relative">Отправить код</div>
+<p style="text-align:center;margin-top:14px;position:relative"><span class="lnk">← Вернуться ко входу</span></p>
+<p style="margin-top:20px;color:#CFD8F5;font-size:10px;position:relative">Письмо придёт на вашу почту. Если его нет, проверьте папку «Спам».</p>
+</div></div>
+<div class="d"><p class="lead">Восстановление доступа, если студент забыл пароль.</p>
+<h4>На экране</h4><ul><li>Одно поле — почта, с которой регистрировались</li><li>Кнопка «Отправить код»</li><li>Ссылка «Вернуться ко входу»</li><li>Подсказка про папку «Спам»</li></ul>
+<h4>Что дальше</h4><p class="n">На почту приходит 6-значный код. Его студент вводит на следующем экране, а новый пароль придумывает уже после него.</p></div></div>
+
+<div class="item" data-g="Вход и аккаунт" data-title="Код из письма" data-badge="Новый">
+<div class="phone fr"><div class="scr">
+<div class="row2" style="margin-top:6px"><span class="cir">←</span></div>
+<div style="font-size:44px;margin-top:22px;text-align:center">🔑</div>
+<div class="h" style="text-align:center">Введите код</div>
+<p style="text-align:center;color:#5B6585">Мы отправили 6-значный код на<br><b style="color:#14214D">almiri.u@gmail.com</b></p>
+<div class="code" style="margin-top:20px"><i>8</i><i>1</i><i>5</i><i class="f"></i><i></i><i></i></div>
+<p style="text-align:center;color:#5B6585">Отправить код ещё раз через 0:42</p>
+<p style="text-align:center;margin-top:10px"><span style="color:#1B3A9E;font-weight:500;text-decoration:underline">Указать другую почту</span></p>
+<div class="btn" style="position:absolute;left:14px;right:14px;bottom:16px">Продолжить</div>
+</div></div>
+<div class="d"><p class="lead">Шаг 2 восстановления пароля: студент вводит код из письма.</p>
+<h4>На экране</h4><ul><li>Адрес, на который ушёл код</li><li>Шесть ячеек для кода, курсор переходит сам</li><li>Таймер «Отправить код ещё раз»: через минуту кнопка становится активной</li><li>Ссылка «Указать другую почту», если ошиблись в адресе</li></ul>
+<h4>Что дальше</h4><p class="n">Код верный — открывается экран нового пароля. Код неверный — ячейки подсвечиваются красным и появляется подсказка.</p>
+<div class="chg"><b>Что изменилось:</b> раньше код и новый пароль были на одной странице. Теперь код вводится отдельно, пароль — на следующем экране.</div></div></div>
+
+<div class="item" data-g="Вход и аккаунт" data-title="Новый пароль" data-badge="Изменён">
+<div class="phone fr"><div class="scr">
+<div class="row2" style="margin-top:6px"><span class="cir">←</span><span class="sp"></span><span class="ok">✓ Код подтверждён</span></div>
+<div style="font-size:44px;margin-top:22px;text-align:center">🔒</div>
+<div class="h" style="text-align:center">Новый пароль</div>
+<p style="text-align:center;color:#5B6585;margin-bottom:14px">Придумайте пароль, которого раньше не было</p>
+<div class="in w s">Новый пароль</div>
+<div class="in w s">Повторите пароль</div>
+<div style="margin-top:10px"><div class="req"><i>✓</i>Минимум 8 символов</div><div class="req"><i>✓</i>Есть хотя бы одна цифра</div><div class="req"><i class="n">○</i>Пароли совпадают</div></div>
+<div class="btn" style="position:absolute;left:14px;right:14px;bottom:16px">Сохранить пароль</div>
+</div></div>
+<div class="d"><p class="lead">Шаг 3 восстановления: студент задаёт новый пароль. Кода на экране больше нет.</p>
+<h4>На экране</h4><ul><li>Отметка «Код подтверждён»</li><li>Два поля пароля</li><li>Список требований: зелёная галочка появляется, когда требование выполнено</li></ul>
+<h4>Что дальше</h4><p class="n">После сохранения студент возвращается на экран входа и входит с новым паролем.</p>
+<div class="chg"><b>Что изменилось:</b> убрали ячейки кода, остались только поля пароля.</div></div></div>
+
+<div class="item" data-g="Заказ" data-title="Меню" data-badge="Изменён">
+<div class="phone fr"><div class="scr">
+<div class="row2"><div class="sun" style="position:static;width:24px;height:24px"></div><b style="font-size:11px;line-height:1.1">ATU<br>Food</b><span class="sp"></span><span class="cir">👤</span><b style="font-size:10px">RU/KZ</b></div>
+<div class="seg" style="margin:10px 0 5px"><b class="on" style="padding:7px 1px;font-size:8.5px;white-space:nowrap">Главный корпус</b><b style="padding:7px 1px;font-size:8.5px;white-space:nowrap">Корпус Б</b><b style="padding:7px 1px;font-size:8.5px;white-space:nowrap">Корпус С</b></div>
+<p style="color:#1D5C1A;font-size:10px;font-weight:500;margin-bottom:8px">● Открыто до 17:00 · буфет, фастфуд</p>
+<div class="row2" style="overflow:hidden;gap:6px"><div class="cat on"><i>☀️</i>Все</div><div class="cat"><i>🥐</i>Выпечка</div><div class="cat"><i>🍔</i>Фастфуд</div><div class="cat"><i>🥤</i>Напитки</div></div>
+<div class="h" style="margin:8px 0">Меню</div>
+<div class="grid">
+<div><div class="ph">🌭<i class="plus">+</i></div><h4>Хот-дог</h4><span>650 ₸</span></div>
+<div><div class="ph b2">🥟<i class="plus">+</i></div><h4>Самса</h4><span>450 ₸</span></div>
+<div><div class="ph out">🥐<i class="plus">+</i></div><h4>Пирожок</h4><span>200 ₸</span></div>
+<div><div class="ph b3">🍔<i class="plus">+</i></div><h4>Бургер</h4><span>1 200 ₸</span></div>
+</div>
+<div class="float"><span>Корзина · 2</span><span>900 ₸</span></div>
+</div></div>
+<div class="d"><p class="lead">Первый экран после входа: студент сразу видит меню и выбирает корпус прямо сверху.</p>
+<h4>На экране</h4><ul><li>Сверху: профиль 👤 и язык (бонусы лежат в профиле)</li><li><b>Переключатель корпуса:</b> Главный корпус / Корпус Б / Корпус С. Нажали на корпус — ниже сразу показывается его меню</li><li>Под переключателем: до скольки открыто и что есть в этом корпусе</li><li>Категории: выпечка, фастфуд, напитки, горячие блюда, салаты</li><li>Карточки блюд с ценой, «+» добавляет в корзину</li><li>Если блюдо закончилось, оно затемнено и подписано «Закончилось»</li><li>Плавающая кнопка корзины: 2 блюда на 900 ₸</li></ul>
+<h4>Зачем</h4><p class="n">У каждого корпуса своё меню, цены и остатки. Корпус выбирается на самом меню, поэтому отдельного экрана выбора нет. Если в корзине уже есть блюда и студент меняет корпус, приложение спросит, очистить ли корзину.</p>
+<div class="chg"><b>Что изменилось:</b> экран «Выбор столовой» убрали. Меню теперь идёт сразу после входа, а корпус выбирают вкладками сверху.</div></div></div>
+
+<div class="item" data-g="Заказ" data-title="Блюдо" data-badge="Изменён">
+<div class="phone fr"><div class="scr" style="padding:0">
+<div class="ph" style="border-radius:0 0 24px 24px;aspect-ratio:1.1;font-size:96px">🌭</div>
+<div style="padding:16px 14px"><div class="row2"><div class="h" style="margin:0;font-size:20px">Хот-дог</div><span class="sp"></span><span class="ok">В наличии</span></div>
+<div class="row2" style="margin:22px 0 16px"><b style="font-size:22px">650 ₸</b><span class="sp"></span><span class="cir">−</span><b style="font-size:15px">1</b><span class="cir" style="background:#F3DD2C;border:0">+</span></div>
+</div>
+<div class="card" style="position:absolute;left:14px;right:14px;bottom:66px;box-shadow:0 0 0 1px #E3E6EE"><div class="row2"><span style="color:#5B6585">В корзине уже</span><span class="sp"></span><span>Самса ×2 · 900 ₸</span></div><div class="row2" style="margin-top:4px"><b>Станет в корзине</b><span class="sp"></span><b>3 блюда · 1 550 ₸</b></div></div>
+<div class="btn" style="position:absolute;left:14px;right:14px;bottom:16px">Добавить · 650 ₸</div>
+</div></div>
+<div class="d"><p class="lead">Карточка одного блюда — коротко и без лишнего.</p>
+<h4>На экране</h4><ul><li>Большое фото блюда</li><li>Название и статус «В наличии»</li><li>Цена и выбор количества (− / +)</li><li>Кнопка «Добавить» с ценой этого блюда (650 ₸)</li><li>Плашка «В корзине уже»: что уже выбрано и сколько станет всего — 3 блюда на 1 550 ₸</li></ul>
+<div class="chg"><b>Что убрали:</b> описание, граммы и калории, состав, выбор добавок (кетчуп, сырный соус, чай) и время приготовления: хот-дог готов сразу, поэтому «около 10 минут» не нужно.</div></div></div>
+
+<div class="item" data-g="Заказ" data-title="Оформление заказа" data-badge="Изменён">
+<div class="phone fr"><div class="scr">
+<div class="h" style="margin:2px 0 8px">Оформление заказа</div>
+<div class="card"><div class="row2"><span class="ph" style="width:30px;font-size:16px;border-radius:10px">🌭</span><b>Хот-дог</b><span class="sp"></span>650 ₸ ✕</div>
+<div class="row2" style="margin-top:6px"><span class="ph b2" style="width:30px;font-size:16px;border-radius:10px">🥟</span><b>Самса ×2</b><span class="sp"></span>900 ₸ ✕</div></div>
+<div class="card" style="background:#FFF6C2;margin-top:8px;padding:9px 10px">
+<div class="row2"><b>Списать бонусы</b><span class="sp"></span><span style="color:#5B6585">Доступно 240 ₸</span></div>
+<div class="row2" style="margin-top:7px;gap:6px"><div class="fld"><b style="font-size:16px">150</b><i class="car"></i><span class="sp"></span><span style="color:#5B6585">₸</span></div><span class="cir" style="background:#fff">✕</span></div>
+<div class="row2" style="gap:5px;margin-top:7px"><span class="chip mini">50</span><span class="chip mini">100</span><span class="chip mini">Всё 240</span></div>
+</div>
+<div class="card" style="margin:8px 0;padding:8px 10px;border:2px solid #1B3A9E"><b>💳 Оплата картой</b> <span style="color:#5B6585">Kaspi</span></div>
+<div class="in w s" style="margin:0 0 8px;color:#14214D">💬 Добавьте пожалуйста салфетки</div>
+<div class="card" style="padding:8px 10px"><div class="row2"><span style="color:#5B6585">Заказ</span><span class="sp"></span>1 550 ₸</div><div class="row2" style="margin-top:3px"><span style="color:#5B6585">Бонусы</span><span class="sp"></span><span class="g">−150 ₸</span></div></div>
+<div class="btn" style="position:absolute;left:14px;right:14px;bottom:16px">К оплате · 1 400 ₸</div>
+</div></div>
+<div class="d"><p class="lead">Последний шаг перед оплатой: проверить заказ и решить, сколько бонусов потратить.</p>
+<h4>На экране</h4><ul><li>Список блюд, любое можно убрать крестиком</li><li><b>Блок «Списать бонусы»:</b> поле, куда студент сам вводит сумму</li><li>Быстрые кнопки: 50, 100 или «Всё»</li><li>Оплата только картой (Kaspi)</li><li><b>Поле «Добавить комментарий»</b> под способом оплаты: студент пишет пожелание к заказу, например «Добавьте пожалуйста салфетки». Комментарий увидят кассир и кухня</li><li>Сумма заказа, списанные бонусы и итог на кнопке</li></ul>
+<h4>Как работает ввод бонусов</h4><p class="n">Студент вводит число, итог пересчитывается сразу. Больше доступного баланса или больше суммы заказа ввести нельзя: приложение подставит максимум.</p>
+<div class="chg"><b>Что изменилось:</b> раньше был переключатель «списать всё». Теперь студент сам решает, сколько потратить.</div></div></div>
+
+<div class="item" data-g="Заказ" data-title="Оплата" data-badge="Изменён">
+<div class="phone fr"><div class="scr">
+<div class="h" style="margin:2px 0 8px">Оплата</div>
+<div class="ticket" style="padding:10px 14px;margin-bottom:10px"><p style="font-size:10px">Номер заказа · Главный корпус</p><div class="n" style="font-size:30px">Г-128</div></div>
+<div class="card"><div class="row2"><span>Хот-дог, Самса ×2</span><span class="sp"></span><b>1 400 ₸</b></div><p style="color:#5B6585;margin-top:4px">Главный корпус · бонусами списано 150 ₸</p></div>
+<div class="card" style="margin-top:10px;border:2px solid #1B3A9E"><b>Оплата картой</b><p style="color:#5B6585;margin-top:3px">Откроется Kaspi.kz, оплата за 10 секунд</p></div>
+<p style="margin-top:12px">Номер заказа уже за вами. После оплаты заказ сразу попадает на кухню</p>
+<div class="btn" style="position:absolute;left:14px;right:14px;bottom:16px">Оплатить картой · 1 400 ₸</div>
+</div></div>
+<div class="d"><p class="lead">Экран подтверждения способа оплаты.</p>
+<h4>На экране</h4><ul><li><b>Номер заказа</b> показан сразу, ещё до оплаты</li><li>Сводка заказа: что, где и на какую сумму (уже с учётом бонусов)</li><li>Kaspi — откроется приложение Kaspi, оплата занимает несколько секунд</li></ul>
+<h4>Что дальше</h4><p class="n">После оплаты заказ уходит на кухню под тем же номером, а студент получает чек с QR.</p><div class="chg"><b>Что изменилось:</b> номер заказа теперь виден уже здесь, а не только после оплаты.</div></div></div>
+
+<div class="item" data-g="Заказ" data-title="Статус заказа" data-badge="Изменён">
+<div class="phone fr"><div class="scr">
+<div class="row2" style="margin-top:6px"><span class="ok">✓ Оплачено</span></div>
+<div class="ticket" style="margin-top:10px"><div class="sun"></div><p>Номер заказа</p><div class="n">Г-128</div><p>Главный корпус</p></div>
+<div style="display:flex;gap:4px;margin:10px 0 4px"><div style="flex:1;text-align:center"><i style="display:block;height:5px;border-radius:9px;background:#1D5C1A"></i><span style="display:block;margin-top:4px;font-size:8px;font-weight:500;color:#1D5C1A">Оплачен</span></div><div style="flex:1;text-align:center"><i style="display:block;height:5px;border-radius:9px;background:#1D5C1A"></i><span style="display:block;margin-top:4px;font-size:8px;font-weight:500;color:#1D5C1A">Принят</span></div><div style="flex:1;text-align:center"><i style="display:block;height:5px;border-radius:9px;background:#1B3A9E"></i><span style="display:block;margin-top:4px;font-size:8px;font-weight:500;color:#1B3A9E">Готовится</span></div><div style="flex:1;text-align:center"><i style="display:block;height:5px;border-radius:9px;background:#A9B0C4"></i><span style="display:block;margin-top:4px;font-size:8px;font-weight:500;color:#A9B0C4">Готов</span></div><div style="flex:1;text-align:center"><i style="display:block;height:5px;border-radius:9px;background:#A9B0C4"></i><span style="display:block;margin-top:4px;font-size:8px;font-weight:500;color:#A9B0C4">Выдан</span></div></div>
+<div class="card" style="margin-top:10px"><div class="row2"><span>Хот-дог ×1, Самса ×2</span><span class="sp"></span><b>1 400 ₸</b></div><p style="margin-top:4px">💬 Добавьте пожалуйста салфетки</p><p style="color:#5B6585;margin-top:3px">Бонусы −150 ₸</p></div>
+<div class="card row2" style="gap:10px;margin-top:8px;padding:8px 10px"><svg class="qr" style="width:46px;height:46px" viewBox="0 0 9 9" shape-rendering="crispEdges"><rect x="8" y="0" width="1" height="1" fill="#14214D"/><rect x="0" y="2" width="1" height="1" fill="#14214D"/><rect x="2" y="2" width="1" height="1" fill="#14214D"/><rect x="1" y="0" width="1" height="1" fill="#14214D"/><rect x="1" y="6" width="1" height="1" fill="#14214D"/><rect x="0" y="8" width="1" height="1" fill="#14214D"/><rect x="2" y="8" width="1" height="1" fill="#14214D"/><rect x="6" y="2" width="1" height="1" fill="#14214D"/><rect x="8" y="2" width="1" height="1" fill="#14214D"/><rect x="0" y="1" width="1" height="1" fill="#14214D"/><rect x="0" y="7" width="1" height="1" fill="#14214D"/><rect x="1" y="2" width="1" height="1" fill="#14214D"/><rect x="2" y="1" width="1" height="1" fill="#14214D"/><rect x="2" y="7" width="1" height="1" fill="#14214D"/><rect x="6" y="1" width="1" height="1" fill="#14214D"/><rect x="7" y="0" width="1" height="1" fill="#14214D"/><rect x="1" y="8" width="1" height="1" fill="#14214D"/><rect x="0" y="0" width="1" height="1" fill="#14214D"/><rect x="8" y="1" width="1" height="1" fill="#14214D"/><rect x="2" y="0" width="1" height="1" fill="#14214D"/><rect x="0" y="6" width="1" height="1" fill="#14214D"/><rect x="2" y="6" width="1" height="1" fill="#14214D"/><rect x="7" y="2" width="1" height="1" fill="#14214D"/><rect x="6" y="0" width="1" height="1" fill="#14214D"/><rect x="0" y="3" width="1" height="1" fill="#14214D"/><rect x="0" y="4" width="1" height="1" fill="#14214D"/><rect x="1" y="3" width="1" height="1" fill="#14214D"/><rect x="1" y="5" width="1" height="1" fill="#14214D"/><rect x="2" y="3" width="1" height="1" fill="#14214D"/><rect x="2" y="5" width="1" height="1" fill="#14214D"/><rect x="3" y="0" width="1" height="1" fill="#14214D"/><rect x="3" y="1" width="1" height="1" fill="#14214D"/><rect x="3" y="2" width="1" height="1" fill="#14214D"/><rect x="3" y="3" width="1" height="1" fill="#14214D"/><rect x="3" y="5" width="1" height="1" fill="#14214D"/><rect x="3" y="6" width="1" height="1" fill="#14214D"/><rect x="4" y="1" width="1" height="1" fill="#14214D"/><rect x="4" y="3" width="1" height="1" fill="#14214D"/><rect x="4" y="5" width="1" height="1" fill="#14214D"/><rect x="4" y="6" width="1" height="1" fill="#14214D"/><rect x="4" y="7" width="1" height="1" fill="#14214D"/><rect x="4" y="8" width="1" height="1" fill="#14214D"/><rect x="5" y="1" width="1" height="1" fill="#14214D"/><rect x="5" y="4" width="1" height="1" fill="#14214D"/><rect x="5" y="6" width="1" height="1" fill="#14214D"/><rect x="5" y="7" width="1" height="1" fill="#14214D"/><rect x="5" y="8" width="1" height="1" fill="#14214D"/><rect x="6" y="4" width="1" height="1" fill="#14214D"/><rect x="6" y="5" width="1" height="1" fill="#14214D"/><rect x="6" y="7" width="1" height="1" fill="#14214D"/><rect x="6" y="8" width="1" height="1" fill="#14214D"/><rect x="7" y="5" width="1" height="1" fill="#14214D"/><rect x="8" y="4" width="1" height="1" fill="#14214D"/><rect x="8" y="6" width="1" height="1" fill="#14214D"/><rect x="8" y="7" width="1" height="1" fill="#14214D"/></svg><div><b>QR заказа</b><br><span style="color:#5B6585;font-size:10px">Покажите кассиру при получении</span></div></div>
+<p class="g" style="margin-top:10px">+50 бонусов после выдачи</p>
+<div class="btn o" style="position:absolute;left:14px;right:14px;bottom:16px">Открыть чек и QR</div>
+</div></div>
+<div class="d"><p class="lead">Студент видит номер заказа и следит, как он готовится.</p>
+<h4>На экране</h4><ul><li>Большой номер заказа — его называют на выдаче</li><li>Прямо под номером — полоса статусов с подписями: оплачен, принят, готовится, готов, выдан. Текущий этап («Готовится») выделен синим, пройденные — зелёные</li><li>Короткий состав и итог, под составом комментарий студента к заказу</li><li>Маленький QR заказа — открывается на весь экран в чеке</li><li>Сколько бонусов придёт после выдачи</li><li>Кнопка «Открыть чек»</li></ul>
+<h4>Что дальше</h4><p class="n">Когда заказ готов, приходит уведомление, а на экране выдачи появляется номер. Студент подходит к кассе, показывает QR, кассир сканирует его, видит заказ и отдаёт.</p><div class="chg"><b>Что изменилось:</b> номер заказа есть и тут, и на экране оплаты. Добавили QR заказа для выдачи.</div></div></div>
+
+<div class="item" data-g="Заказ" data-title="Электронный чек" data-badge="Изменён">
+<div class="phone fr"><div class="scr" style="padding-bottom:10px">
+<div class="row2" style="margin:2px 0 8px"><span class="cir">←</span><b style="font-size:12.5px;white-space:nowrap">Электронный чек</b><span class="sp"></span><span class="ok" style="padding:3px 7px;font-size:9.5px">Оплачен</span></div>
+<div class="card row2" style="gap:10px;margin-bottom:6px;padding:6px 10px"><svg class="qr" style="width:54px;height:54px" viewBox="0 0 9 9" shape-rendering="crispEdges"><rect x="8" y="0" width="1" height="1" fill="#14214D"/><rect x="0" y="2" width="1" height="1" fill="#14214D"/><rect x="2" y="2" width="1" height="1" fill="#14214D"/><rect x="1" y="0" width="1" height="1" fill="#14214D"/><rect x="1" y="6" width="1" height="1" fill="#14214D"/><rect x="0" y="8" width="1" height="1" fill="#14214D"/><rect x="2" y="8" width="1" height="1" fill="#14214D"/><rect x="6" y="2" width="1" height="1" fill="#14214D"/><rect x="8" y="2" width="1" height="1" fill="#14214D"/><rect x="0" y="1" width="1" height="1" fill="#14214D"/><rect x="0" y="7" width="1" height="1" fill="#14214D"/><rect x="1" y="2" width="1" height="1" fill="#14214D"/><rect x="2" y="1" width="1" height="1" fill="#14214D"/><rect x="2" y="7" width="1" height="1" fill="#14214D"/><rect x="6" y="1" width="1" height="1" fill="#14214D"/><rect x="7" y="0" width="1" height="1" fill="#14214D"/><rect x="1" y="8" width="1" height="1" fill="#14214D"/><rect x="0" y="0" width="1" height="1" fill="#14214D"/><rect x="8" y="1" width="1" height="1" fill="#14214D"/><rect x="2" y="0" width="1" height="1" fill="#14214D"/><rect x="0" y="6" width="1" height="1" fill="#14214D"/><rect x="2" y="6" width="1" height="1" fill="#14214D"/><rect x="7" y="2" width="1" height="1" fill="#14214D"/><rect x="6" y="0" width="1" height="1" fill="#14214D"/><rect x="0" y="3" width="1" height="1" fill="#14214D"/><rect x="0" y="4" width="1" height="1" fill="#14214D"/><rect x="1" y="3" width="1" height="1" fill="#14214D"/><rect x="1" y="5" width="1" height="1" fill="#14214D"/><rect x="2" y="3" width="1" height="1" fill="#14214D"/><rect x="2" y="5" width="1" height="1" fill="#14214D"/><rect x="3" y="0" width="1" height="1" fill="#14214D"/><rect x="3" y="1" width="1" height="1" fill="#14214D"/><rect x="3" y="2" width="1" height="1" fill="#14214D"/><rect x="3" y="3" width="1" height="1" fill="#14214D"/><rect x="3" y="5" width="1" height="1" fill="#14214D"/><rect x="3" y="6" width="1" height="1" fill="#14214D"/><rect x="4" y="1" width="1" height="1" fill="#14214D"/><rect x="4" y="3" width="1" height="1" fill="#14214D"/><rect x="4" y="5" width="1" height="1" fill="#14214D"/><rect x="4" y="6" width="1" height="1" fill="#14214D"/><rect x="4" y="7" width="1" height="1" fill="#14214D"/><rect x="4" y="8" width="1" height="1" fill="#14214D"/><rect x="5" y="1" width="1" height="1" fill="#14214D"/><rect x="5" y="4" width="1" height="1" fill="#14214D"/><rect x="5" y="6" width="1" height="1" fill="#14214D"/><rect x="5" y="7" width="1" height="1" fill="#14214D"/><rect x="5" y="8" width="1" height="1" fill="#14214D"/><rect x="6" y="4" width="1" height="1" fill="#14214D"/><rect x="6" y="5" width="1" height="1" fill="#14214D"/><rect x="6" y="7" width="1" height="1" fill="#14214D"/><rect x="6" y="8" width="1" height="1" fill="#14214D"/><rect x="7" y="5" width="1" height="1" fill="#14214D"/><rect x="8" y="4" width="1" height="1" fill="#14214D"/><rect x="8" y="6" width="1" height="1" fill="#14214D"/><rect x="8" y="7" width="1" height="1" fill="#14214D"/></svg><div><b style="font-size:17px">Г-128</b><br><span style="color:#5B6585;font-size:9.5px">QR выдачи. Покажите кассиру: он отсканирует и увидит заказ</span></div></div>
+<div class="rc">
+<div class="c"><b style="font-size:13px">ATU Food</b><br>Главный корпус · касса 1<br><span style="color:#5B6585">ТОО «ATU Food» · БИН 000000000000</span></div>
+<hr>
+<div class="l"><span>Чек №</span><b>000128</b></div>
+<div class="l"><span>Заказ</span><b>Г-128</b></div>
+<div class="l"><span>Дата</span><span style="color:#14214D">12.10.2026</span></div>
+<div class="l"><span>Время</span><span style="color:#14214D">13:42:07</span></div>
+<div class="l"><span>Кассир</span><span style="color:#14214D">Айгерим</span></div>
+<hr>
+<div class="l i"><span>Хот-дог · 1 × 650</span><span>650 ₸</span></div>
+<div class="l i"><span>Самса · 2 × 450</span><span>900 ₸</span></div>
+<hr>
+<div class="l"><span>Сумма</span><span style="color:#14214D">1 550 ₸</span></div>
+<div class="l"><span>Списано бонусов</span><span class="g">−150 ₸</span></div>
+<div class="l t"><span>ИТОГО</span><b>1 400 ₸</b></div>
+<hr>
+<div class="l"><span>Оплата</span><span style="color:#14214D">Kaspi · 13:41:52</span></div>
+<div class="l"><span>№ транзакции</span><span style="color:#14214D">KSP-4821-0935</span></div>
+<div class="l"><span>Начислено бонусов</span><span class="g">+70 ₸</span></div>
+<div class="l"><span>Баланс бонусов</span><span style="color:#14214D">90 → 160 ₸</span></div>
+<hr>
+<div class="l"><span>Фискальный признак</span><span style="color:#14214D">3471920584</span></div>
+</div>
+<div class="row2" style="gap:6px;margin-top:8px"><span class="btn sm o sp" style="flex:1">Поделиться</span><span class="btn sm" style="flex:1">Скачать PDF</span></div>
+</div></div>
+<div class="d"><p class="lead">Полный электронный чек: всё, что нужно, чтобы сверить заказ и оплату.</p>
+<h4>QR выдачи (вверху чека)</h4><p class="n">Студент показывает этот QR кассиру. Кассир сканирует его в приложении, видит номер заказа, состав и статус оплаты и отдаёт заказ.</p><h4>Что в чеке</h4><ul><li><b>Кто продавец:</b> название, БИН, корпус и номер кассы</li><li><b>Когда:</b> номер чека, номер заказа, дата и точное время (до секунды)</li><li><b>Кто обслужил:</b> имя кассира</li><li><b>Что куплено:</b> блюдо, количество × цена, сумма по строке</li><li><b>Деньги:</b> сумма, списанные бонусы, итого</li><li><b>Оплата:</b> способ, время платежа и номер транзакции Kaspi</li><li><b>Бонусы:</b> сколько начислено и баланс до → после</li><li>Фискальный признак</li></ul>
+<div class="chg"><b>Что изменилось:</b> QR теперь не для проверки чека, а для выдачи заказа. Он стоит вверху и крупнее.</div><div class="chg" style="margin-top:8px"><b>Важно:</b> БИН, номер транзакции и фискальный признак здесь для примера. Настоящие данные подставит система после подключения Kaspi и кассы.</div>
+<h4>Действия</h4><p class="n">«Поделиться» отправляет чек в мессенджер, «Скачать PDF» сохраняет его в телефон.</p></div></div>
+
+<div class="item" data-g="Бонусы и профиль" data-title="Бонусы" data-badge="Изменён">
+<div class="phone fr"><div class="scr" style="padding-bottom:10px">
+<div class="h" style="margin:4px 0 6px">Мои бонусы</div>
+<div style="background:#F3DD2C;border-radius:20px;padding:12px 14px"><div class="row2"><div style="font-size:28px;font-weight:500;white-space:nowrap">240 ₸</div><span class="sp"></span><span class="tag" style="background:#14214D;color:#F3DD2C;font-size:9px;padding:3px 7px;white-space:nowrap">🎓 Студент · 5%</span></div><div style="height:7px;border-radius:9px;background:rgba(20,33,77,.18);margin:7px 0"><i style="display:block;width:47%;height:100%;border-radius:9px;background:#1B3A9E"></i></div><p style="font-size:10px">Ещё 8 000 ₸ до «Отличник» · 7%</p><div class="btn sm" style="background:#fff;margin-top:6px;padding:6px">Потратить бонусы</div></div>
+<div class="h" style="font-size:12px;margin:7px 0 4px">Уровни · оплаты за 30 дней</div>
+<div class="row2" style="gap:4px;align-items:stretch">
+<div style="flex:1;text-align:center;background:#fff;border-radius:11px;padding:5px 1px;border:1px solid #E3E6EE">🌱<br><b>3%</b><br><span style="font-size:8px;color:#5B6585">от 0</span></div>
+<div style="flex:1;text-align:center;background:#fff;border-radius:11px;padding:5px 1px;border:2px solid #1B3A9E">🎓<br><b>5%</b><br><span style="font-size:8px;color:#5B6585">от 10 тыс.</span></div>
+<div style="flex:1;text-align:center;background:#fff;border-radius:11px;padding:5px 1px;border:1px solid #E3E6EE">⭐<br><b>7%</b><br><span style="font-size:8px;color:#5B6585">от 25 тыс.</span></div>
+<div style="flex:1;text-align:center;background:#fff;border-radius:11px;padding:5px 1px;border:1px solid #E3E6EE">👑<br><b>10%</b><br><span style="font-size:8px;color:#5B6585">от 40 тыс.</span></div>
+</div>
+<div class="h" style="font-size:12px;margin:7px 0 3px">Бонусная акция</div>
+<div class="card" style="padding:2px 10px;font-size:10px">
+<div class="mr" style="padding:4px 0"><span>⚡</span><span><b>Счастливый час</b> 16:00–17:00</span><span class="sp"></span><span class="g">×2</span></div>
+</div>
+<div class="h" style="font-size:12px;margin:7px 0 4px">История</div>
+<div class="row2" style="margin-bottom:6px"><span class="cir">↗</span><div><b>Заказ Г-120</b> <span class="tag">Главный</span></div><span class="sp"></span><span class="g">+50 ₸</span></div>
+<div class="row2"><span class="cir">↙</span><div><b>Списание</b> <span class="tag">Корпус Б</span></div><span class="sp"></span><span class="r">−100 ₸</span></div>
+</div></div>
+<div class="d"><p class="lead">Копилка студента: сколько бонусов накоплено, какой у него уровень и как копить быстрее.</p>
+<h4>Сколько начисляем</h4><p class="n">Процент зависит от уровня. Уровень считается по тому, сколько студент заплатил за последние 30 дней. Чем больше заказывает, тем выше процент.</p>
+<ul><li>🌱 <b>Первокурсник:</b> до 10 000 ₸ — <b>3%</b></li><li>🎓 <b>Студент:</b> 10 000–24 999 ₸ — <b>5%</b></li><li>⭐ <b>Отличник:</b> 25 000–39 999 ₸ — <b>7%</b></li><li>👑 <b>Ректор:</b> от 40 000 ₸ — <b>10%</b></li></ul>
+<h4>Правила</h4><ul><li>Процент берётся от суммы, которую студент заплатил деньгами. Бонусами оплаченную часть не считаем. Пример: заказ 1 550 ₸, списано 150 ₸, к оплате 1 400 ₸. Уровень «Студент» даёт 5%, то есть <b>+70 ₸</b></li><li>1 бонус = 1 ₸. Дробные части отбрасываем</li><li>Бонусы приходят после выдачи заказа, а не после оплаты</li><li>Уровень считается за скользящие 30 дней, поэтому в начале месяца он не обнуляется</li><li>Бонусы действуют 3 месяца, старые сгорают первыми</li><li>Если заказ отменили или вернули деньги, начисленные за него бонусы убираются, а списанные возвращаются</li></ul>
+<h4>Бонусная акция</h4><ul><li>⚡ <b>Счастливый час:</b> по будням с 16:00 до 17:00 бонусы ×2. В это время очередь меньше, поэтому студентов приятно переманить на него</li></ul>
+<p class="n" style="margin-top:6px">Проценты, пороги, а также время и множитель счастливого часа можно менять в админке.</p>
+<div class="chg"><b>Что изменилось:</b> вместо «до бесплатного обеда» теперь уровни с растущим процентом. Цифры предложены для примера, их легко поменять.</div></div></div>
+
+<div class="item" data-g="Бонусы и профиль" data-title="Мои заказы и уведомление" data-badge="Изменён">
+<div class="phone fr"><div class="scr">
+<div class="card row2" style="background:#14214D;color:#fff;margin:4px 0 8px"><span style="font-size:18px">🔔</span><div><b>Ваш заказ готов</b><br>Г-128 · стойка 2</div></div>
+<div class="h">Мои заказы</div>
+<div class="card" style="margin-bottom:8px"><div class="row2"><b style="font-size:13px">Г-128</b><span class="ok">Готов</span><span class="sp"></span>сегодня</div><p style="margin-top:4px;color:#5B6585">Главный · 1 400 ₸ · <span style="color:#1B3A9E;font-weight:500">Чек ›</span></p></div>
+<div class="card" style="margin-bottom:8px"><div class="row2"><b style="font-size:13px">Б-045</b><span class="tag">Готовится</span><span class="sp"></span>сегодня</div><p style="margin-top:4px;color:#5B6585">Корпус Б · 850 ₸ · <span style="color:#1B3A9E;font-weight:500">Чек ›</span></p></div>
+<div class="card"><div class="row2"><b style="font-size:13px">Г-120</b><span class="tag" style="background:#EEF0F5;color:#5B6585">Выдан</span><span class="sp"></span>вчера</div><p style="margin-top:4px;color:#5B6585">Главный · 1 000 ₸ · <span style="color:#1B3A9E;font-weight:500">Чек ›</span></p></div>
+</div></div>
+<div class="d"><p class="lead">История заказов и всплывающее уведомление, когда заказ готов.</p>
+<h4>На экране</h4><ul><li>Тёмная плашка-уведомление: «Ваш заказ готов», номер и стойка выдачи</li><li>Список заказов: номер, статус, дата, корпус и сумма</li><li>У каждого заказа ссылка «Чек ›»</li></ul>
+<div class="chg"><b>Что изменилось:</b> кнопки «Язык: RU» и «Выйти» убрали отсюда. Всё личное теперь в профиле.</div></div></div>
+
+<div class="item" data-g="Бонусы и профиль" data-title="Профиль" data-badge="Изменён">
+<div class="phone fr"><div class="scr" style="padding-bottom:10px">
+<div class="row2" style="margin:2px 0 8px"><div class="h" style="margin:0">Профиль</div><span class="sp"></span><span class="chip mini">Изменить</span></div>
+<div class="pf">АУ</div>
+<div style="text-align:center;margin:6px 0 10px"><b style="font-size:14px">Альмири Усербай</b><br><span class="tag" style="display:inline-block;margin-top:4px">Студент</span></div>
+<div class="card" style="padding:2px 12px;margin-bottom:8px"><div class="mr"><span class="ic">⚙️</span><b>Настройки</b><span class="sp"></span><span class="v">›</span></div></div>
+<div class="card" style="padding:2px 12px;margin-bottom:8px">
+<div class="mr"><span class="ic">🧾</span><span>Мои заказы</span><span class="sp"></span><span class="v">›</span></div>
+<div class="mr"><span class="ic">💳</span><span>Способ оплаты</span><span class="sp"></span><span class="v">Картой ›</span></div>
+<div class="mr"><span class="ic">🎁</span><span>Бонусы</span><span class="sp"></span><b>240 ₸ ›</b></div>
+</div>
+<div class="btn" style="background:#fff;color:#A32D2D;border:1px solid #F0C9C9;margin-top:10px">Выйти из аккаунта</div>
+</div></div>
+<div class="d"><p class="lead">Личный кабинет студента: данные, настройки и всё, что связано с заказами и деньгами.</p>
+<h4>На экране</h4><ul><li>Аватар с инициалами, имя и роль. Кнопка «Изменить» открывает экран редактирования (следующий)</li><li><b>Настройки</b> — отдельный экран (следующий)</li><li>Вне настроек: <b>Мои заказы</b>, <b>Способ оплаты</b> (карта Kaspi) и <b>Бонусы</b> с текущим балансом</li><li>Красная кнопка «Выйти из аккаунта» внизу</li></ul>
+<h4>Как попасть</h4><p class="n">Значок 👤 в правом верхнем углу меню.</p>
+<div class="chg"><b>Что изменилось:</b> язык, уведомления и смена пароля переехали в «Настройки». Добавили «Способ оплаты». Политика конфиденциальности переехала в «Настройки → Помощь».</div></div></div>
+
+<div class="item" data-g="Бонусы и профиль" data-title="Изменить профиль" data-badge="Новый">
+<div class="phone fr"><div class="scr">
+<div class="row2" style="margin:2px 0 12px"><span class="cir">←</span><div class="h" style="margin:0">Изменить профиль</div></div>
+<div style="position:relative;width:62px;margin:6px auto 0"><div class="pf">АУ</div><span class="cir" style="position:absolute;right:-6px;bottom:-4px;background:#1B3A9E;border:2px solid #F7F8FA;color:#fff;width:24px;height:24px;font-size:11px">📷</span></div>
+<p style="text-align:center;margin:8px 0 14px"><span style="color:#1B3A9E;font-weight:500;text-decoration:underline">Изменить аватар</span></p>
+<p style="color:#5B6585;font-size:10px;margin:0 0 4px;text-transform:uppercase;letter-spacing:.05em">Имя</p>
+<div class="fld" style="margin-bottom:10px"><b style="font-size:13px">Альмири</b><i class="car"></i></div>
+<p style="color:#5B6585;font-size:10px;margin:0 0 4px;text-transform:uppercase;letter-spacing:.05em">Фамилия</p>
+<div class="in w s" style="color:#14214D;font-size:13px;font-weight:500;padding:11px 12px">Усербай</div>
+<div class="btn" style="position:absolute;left:14px;right:14px;bottom:16px">Сохранить</div>
+</div></div>
+<div class="d"><p class="lead">Что открывается по кнопке «Изменить» в профиле.</p>
+<h4>На экране</h4><ul><li>Круглый аватар со значком камеры и ссылка «Изменить аватар»: студент выбирает фото из галереи или снимает новое</li><li>Поля «Имя» и «Фамилия»</li><li>Кнопка «Сохранить»</li></ul>
+<h4>Что дальше</h4><p class="n">После сохранения студент возвращается в профиль, где уже видны новые имя и аватар. Почта здесь не меняется, её меняют в «Настройки → Сменить почту».</p>
+<div class="chg"><b>Что нового:</b> раньше кнопка «Изменить» не имела экрана. Теперь видно, что внутри.</div></div></div>
+
+<div class="item" data-g="Бонусы и профиль" data-title="Настройки" data-badge="Новый">
+<div class="phone fr"><div class="scr">
+<div class="row2" style="margin:6px 0 10px"><span class="cir">←</span><div class="h" style="margin:0">Настройки</div></div>
+<div class="card" style="padding:2px 12px">
+<div class="mr"><span class="ic">🔔</span><span>Звуки и уведомления</span><span class="sp"></span><span class="v">›</span></div>
+<div class="mr"><span class="ic">🌐</span><span>Язык</span><span class="sp"></span><span class="v">Русский ›</span></div>
+<div class="mr"><span class="ic">🔒</span><span>Сменить пароль</span><span class="sp"></span><span class="v">›</span></div>
+<div class="mr"><span class="ic">✉️</span><span>Сменить почту</span><span class="sp"></span><span class="v">›</span></div>
+<div class="mr"><span class="ic">❓</span><span>Помощь</span><span class="sp"></span><span class="v">›</span></div>
+</div>
+<p style="color:#5B6585;margin-top:10px;font-size:10px">Принимаются адреса вида @gmail.com. На новую почту придёт код подтверждения.</p>
+</div></div>
+<div class="d"><p class="lead">Все настройки приложения в одном месте.</p>
+<h4>Что внутри</h4><ul><li><b>Звуки и уведомления:</b> включить или выключить звук и пуш-уведомления, например «Ваш заказ готов»</li><li><b>Язык:</b> русский или казахский</li><li><b>Сменить пароль:</b> старый пароль, затем новый и повтор</li><li><b>Сменить почту:</b> вводится новая почта @gmail.com, на неё приходит код подтверждения</li><li><b>Помощь:</b> связаться с поддержкой, о приложении, политика конфиденциальности</li></ul>
+<h4>Как попасть</h4><p class="n">Профиль → Настройки. Каждый пункт открывает свой экран — они нарисованы дальше.</p></div></div>
+
+<div class="item" data-g="Настройки" data-title="Звуки и уведомления" data-badge="Новый">
+<div class="phone fr"><div class="scr">
+<div class="row2" style="margin:6px 0 10px"><span class="cir">←</span><div class="h" style="margin:0">Звуки и уведомления</div></div>
+<p style="color:#5B6585;font-size:10px;margin:10px 0 4px;text-transform:uppercase;letter-spacing:.05em">Уведомления</p><div class="card" style="padding:2px 12px;margin-bottom:8px"><div class="mr"><span class="ic">🔔</span><span>Пуш-уведомления</span><span class="sp"></span><span class="tg on"></span></div><div class="mr"><span class="ic">✅</span><span>Заказ готов</span><span class="sp"></span><span class="tg on"></span></div><div class="mr"><span class="ic">🔄</span><span>Смена статуса заказа</span><span class="sp"></span><span class="tg on"></span></div><div class="mr"><span class="ic">🎁</span><span>Начисление бонусов</span><span class="sp"></span><span class="tg on"></span></div><div class="mr"><span class="ic">⚡</span><span>Счастливый час</span><span class="sp"></span><span class="tg"></span></div></div><p style="color:#5B6585;font-size:10px;margin:10px 0 4px;text-transform:uppercase;letter-spacing:.05em">Звуки</p><div class="card" style="padding:2px 12px;margin-bottom:8px"><div class="mr"><span class="ic">🔊</span><span>Звук уведомлений</span><span class="sp"></span><span class="tg on"></span></div><div class="mr"><span class="ic">📳</span><span>Вибрация</span><span class="sp"></span><span class="tg on"></span></div></div>
+</div></div>
+<div class="d"><p class="lead">Что и как приложение сообщает студенту.</p><h4>На экране</h4><ul><li><b>Пуш-уведомления</b> — главный переключатель: если выключить, остальные уведомления не приходят</li><li><b>Заказ готов</b> — самое важное, включено по умолчанию</li><li><b>Смена статуса:</b> принят, готовится, выдан</li><li><b>Начисление бонусов</b> после выдачи заказа</li><li><b>Счастливый час</b> — напоминание о бонусах ×2 в 16:00</li><li>Отдельно звук и вибрация</li></ul><h4>Как попасть</h4><p class="n">Профиль → Настройки → Звуки и уведомления.</p></div></div>
+
+<div class="item" data-g="Настройки" data-title="Язык" data-badge="Новый">
+<div class="phone fr"><div class="scr">
+<div class="row2" style="margin:6px 0 10px"><span class="cir">←</span><div class="h" style="margin:0">Язык</div></div>
+<div class="card" style="padding:2px 12px;margin-bottom:8px"><div class="mr"><span class="cb">✓</span><b>Русский</b></div><div class="mr"><span class="cb e"></span><span>Қазақша</span></div></div><p style="color:#5B6585;font-size:10px;margin-top:6px">Язык меняется сразу, перезапускать приложение не нужно.</p>
+</div></div>
+<div class="d"><p class="lead">Выбор языка интерфейса.</p><h4>На экране</h4><ul><li>Два варианта: <b>Русский</b> и <b>Қазақша</b></li><li>Выбранный язык отмечен галочкой</li></ul><h4>Что дальше</h4><p class="n">Все тексты приложения переключаются сразу. Выбор запоминается в аккаунте.</p></div></div>
+
+<div class="item" data-g="Настройки" data-title="Сменить пароль" data-badge="Новый">
+<div class="phone fr"><div class="scr">
+<div class="row2" style="margin:6px 0 10px"><span class="cir">←</span><div class="h" style="margin:0">Сменить пароль</div></div>
+<div class="in w s">Текущий пароль</div><div class="in w s">Новый пароль</div><div class="in w s">Повторите новый пароль</div><p style="margin:2px 0 6px"><span style="color:#1B3A9E;font-weight:500;text-decoration:underline">Забыли текущий пароль?</span></p><div class="req"><i>✓</i>Минимум 8 символов</div><div class="req"><i>✓</i>Есть хотя бы одна цифра</div><div class="req"><i class="n">○</i>Пароли совпадают</div><div class="btn" style="position:absolute;left:14px;right:14px;bottom:16px">Сохранить пароль</div>
+</div></div>
+<div class="d"><p class="lead">Смена пароля, когда студент помнит старый.</p><h4>На экране</h4><ul><li>«Текущий пароль» — чтобы пароль не сменил чужой человек с телефона</li><li>Новый пароль и повтор</li><li>Список требований с зелёными галочками</li><li>Ссылка «Забыли текущий пароль?» — восстановление через код на почту</li></ul><h4>Что дальше</h4><p class="n">После сохранения появляется сообщение «Пароль изменён».</p></div></div>
+
+<div class="item" data-g="Настройки" data-title="Сменить почту" data-badge="Новый">
+<div class="phone fr"><div class="scr">
+<div class="row2" style="margin:6px 0 10px"><span class="cir">←</span><div class="h" style="margin:0">Сменить почту</div></div>
+<p style="color:#5B6585;margin-bottom:8px">Сейчас: <b style="color:#14214D">almiri.u@gmail.com</b></p><div class="row2" style="margin-bottom:6px"><div class="fld"><span>Новая почта @gmail.com</span><i class="car"></i></div></div><div class="in w s" style="margin-top:6px">Пароль для подтверждения</div><p style="color:#5B6585;font-size:10px;margin-top:8px">Принимаются адреса вида @gmail.com. На новую почту придёт 6-значный код. Пока вы его не введёте, остаётся старая почта.</p><div class="btn" style="position:absolute;left:14px;right:14px;bottom:16px">Отправить код</div>
+</div></div>
+<div class="d"><p class="lead">Привязка другой почты к аккаунту.</p><h4>На экране</h4><ul><li>Текущая почта сверху</li><li>Поле «Новая почта» — адрес вида @gmail.com</li><li>Пароль, чтобы подтвердить, что это владелец</li><li>Кнопка «Отправить код»</li></ul><h4>Что дальше</h4><p class="n">Открывается экран с шестью ячейками, как при регистрации. Код верный — почта заменяется, вход теперь по новому адресу.</p></div></div>
+
+<div class="item" data-g="Настройки" data-title="Помощь" data-badge="Новый">
+<div class="phone fr"><div class="scr">
+<div class="row2" style="margin:6px 0 10px"><span class="cir">←</span><div class="h" style="margin:0">Помощь</div></div>
+<div class="card" style="padding:2px 12px;margin-bottom:8px"><div class="mr"><span class="ic">💬</span><span>Связаться с поддержкой</span><span class="sp"></span><span class="v">›</span></div><div class="mr"><span class="ic">ℹ️</span><span>О приложении</span><span class="sp"></span><span class="v">›</span></div><div class="mr"><span class="ic">📄</span><span>Политика конфиденциальности</span><span class="sp"></span><span class="v">›</span></div></div>
+</div></div>
+<div class="d"><p class="lead">Всё, что нужно, если что-то непонятно или сломалось.</p><h4>На экране</h4><ul><li><b>Связаться с поддержкой</b> — написать нам о проблеме</li><li><b>О приложении</b> — версия и правила сервиса</li><li><b>Политика конфиденциальности</b> — перенесена сюда из профиля</li></ul><h4>Как попасть</h4><p class="n">Профиль → Настройки → Помощь.</p></div></div>
+
+<div class="item" data-g="Настройки" data-title="Связаться с поддержкой" data-badge="Новый">
+<div class="phone fr"><div class="scr">
+<div class="row2" style="margin:6px 0 10px"><span class="cir">←</span><div class="h" style="margin:0">Связаться с поддержкой</div></div>
+<p style="color:#5B6585;font-size:10px;margin:10px 0 4px;text-transform:uppercase;letter-spacing:.05em">Тема</p><div class="row2" style="flex-wrap:wrap;gap:5px"><span class="chip mini on">Заказ</span><span class="chip mini">Оплата</span><span class="chip mini">Бонусы</span><span class="chip mini">Другое</span></div><p style="color:#5B6585;font-size:10px;margin:10px 0 4px;text-transform:uppercase;letter-spacing:.05em">Сообщение</p><div class="in w" style="height:110px">Опишите, что случилось. Если вопрос про заказ, укажите его номер, например Г-128</div><p style="color:#5B6585;font-size:10px;margin-top:6px">Ответ придёт на почту almiri.u@gmail.com</p><div class="btn" style="position:absolute;left:14px;right:14px;bottom:16px">Отправить</div>
+</div></div>
+<div class="d"><p class="lead">Форма обращения в поддержку прямо из приложения.</p><h4>На экране</h4><ul><li>Тема: заказ, оплата, бонусы или другое</li><li>Поле для сообщения</li><li>Подсказка, на какую почту придёт ответ</li><li>Кнопка «Отправить»</li></ul><h4>Что дальше</h4><p class="n">После отправки студент видит «Мы получили обращение и ответим на почту».</p></div></div>
+
+<div class="item" data-g="Настройки" data-title="О приложении" data-badge="Новый">
+<div class="phone fr"><div class="scr">
+<div class="row2" style="margin:6px 0 10px"><span class="cir">←</span><div class="h" style="margin:0">О приложении</div></div>
+<div style="text-align:center;margin:22px 0 14px"><div class="sun" style="position:relative;display:block;margin:0 auto 10px;width:64px;height:64px"></div><b style="font-size:16px">ATU Food</b><br><span style="color:#5B6585">Версия 1.0.0</span></div><p style="text-align:center;color:#5B6585;margin-bottom:14px">Заказывайте еду в корпусах университета без очереди и копите бонусы</p><div class="card" style="padding:2px 12px;margin-bottom:8px"><div class="mr"><span class="ic">📋</span><span>Правила сервиса</span><span class="sp"></span><span class="v">›</span></div><div class="mr"><span class="ic">📄</span><span>Политика конфиденциальности</span><span class="sp"></span><span class="v">›</span></div></div>
+</div></div>
+<div class="d"><p class="lead">Короткая справка о приложении.</p><h4>На экране</h4><ul><li>Логотип, название и версия</li><li>Одна строка о том, что делает приложение</li><li>Ссылки на «Правила сервиса» и «Политику конфиденциальности»</li></ul><p class="n" style="margin-top:8px">Номер версии для примера.</p></div></div>
+
+<div class="item" data-g="Настройки" data-title="Политика конфиденциальности" data-badge="Новый">
+<div class="phone fr"><div class="scr">
+<div class="row2" style="margin:6px 0 10px"><span class="cir">←</span><div class="h" style="margin:0">Политика конфиденциальности</div></div>
+<p style="margin:10px 0 2px"><b>1. Какие данные мы храним</b></p><p style="color:#5B6585;font-size:10.5px">Имя, фамилию, почту, историю заказов и бонусов.</p><p style="margin:10px 0 2px"><b>2. Зачем они нужны</b></p><p style="color:#5B6585;font-size:10.5px">Чтобы принимать заказы, начислять бонусы и отвечать на обращения.</p><p style="margin:10px 0 2px"><b>3. Передача третьим лицам</b></p><p style="color:#5B6585;font-size:10.5px">Данные не продаются и не передаются посторонним.</p><p style="margin:10px 0 2px"><b>4. Ваши права</b></p><p style="color:#5B6585;font-size:10.5px">Можно изменить данные в профиле или попросить удалить аккаунт.</p>
+</div></div>
+<div class="d"><p class="lead">Текст политики, который студент может прочитать в любой момент.</p><h4>На экране</h4><ul><li>Заголовок и прокручиваемый текст по разделам</li></ul><h4>Откуда открывается</h4><p class="n">Настройки → Помощь → Политика конфиденциальности, а также из «О приложении».</p><div class="chg"><b>Важно:</b> текст для примера. Настоящую политику подготовит заказчик.</div></div></div>
+
+</section>
+
+<!-- STAFF -->
+<section class="row" id="w">
+<div class="item" data-g="Вход и смена" data-title="Вход" data-badge="Изменён">
+<div class="phone fr"><div class="scr blue">
+<div class="sun" style="right:-30px;bottom:-30px;width:150px;height:150px"></div>
+<div style="font-size:30px;font-weight:500;margin:120px 0 24px;position:relative">ATU Food</div>
+<div class="in" style="position:relative">Почта @gmail.com</div><div class="in" style="position:relative;margin-bottom:6px">Пароль</div>
+<p style="text-align:right;position:relative" class="lnk">Забыли пароль?</p>
+<div class="btn" style="margin-top:14px;position:relative">Войти</div>
+<p style="text-align:center;margin-top:14px;color:#CFD8F5;position:relative">Нет аккаунта? <span class="lnk">Создать аккаунт</span></p>
+</div></div>
+<div class="d"><p class="lead">Вход такой же, как у студента: это одно и то же приложение.</p><h4>На экране</h4><ul><li>Почта и пароль</li><li>«Забыли пароль?» и «Создать аккаунт», как у студента</li></ul><h4>Чем отличаются сотрудники</h4><p class="n">Экран входа общий. После входа приложение смотрит на роль аккаунта: у студента откроется меню, у сотрудника главный экран с расширенными правами (заказы, меню, история, сканер, смена). Роль сотруднику выдаёт администратор.</p><div class="chg"><b>Что изменилось:</b> отдельный вход сотрудника убран, вход общий со студентом.</div></div></div>
+<div class="item" data-g="Вход и смена" data-title="Открытие смены" data-badge="Новый"><div class="phone fr"><div class="scr"><p style="color:#5B6585">Здравствуйте,</p><div class="h" style="margin:0 0 10px;font-size:20px">Искандер</div><div class="card" style="margin-bottom:8px"><div class="mr"><span class="ic">📍</span><div><b>Главный корпус</b><br><span style="color:#5B6585">Касса 1 · стойка 2</span></div></div><div class="mr"><span class="ic">🕗</span><div><b>8:00–17:00</b><br><span style="color:#5B6585">Ваша смена сегодня</span></div></div></div><div class="card"><span style="color:#5B6585">Наличных в кассе на старте</span><div class="fld" style="margin-top:6px"><b style="font-size:16px">5 000 ₸</b><i class="car"></i></div><p style="color:#5B6585;margin-top:6px">Пересчитайте деньги перед началом</p></div><div class="btn o" style="position:absolute;left:14px;right:14px;bottom:16px;color:#fff">Открыть смену</div></div></div><div class="d"><p class="lead">Первый экран после входа: смена и стартовая сумма.</p><h4>На экране</h4><ul><li>Приветствие по имени, роль</li><li>Корпус, касса, стойка</li><li>Время смены</li><li>Поле «Наличных в кассе на старте» — сотрудник вводит сумму</li><li>Кнопка «Открыть смену»</li></ul><h4>Зачем</h4><p class="n">Это сумма разменных денег в кассе для сверки в конце смены. Оплата заказов только картой, наличные принимать не нужно.</p></div></div>
+<div class="item" data-g="Главная" data-title="Главный экран" data-badge="Новый"><div class="phone fr"><div class="scr"><div class="row2"><div><span style="color:#5B6585">Здравствуйте,</span><br><b style="font-size:17px">Искандер</b></div><span class="sp"></span><span class="cir">🔔</span><span class="cir" style="margin-left:6px">👤</span></div><div class="row2" style="margin:8px 0"><span class="tag">Кассир</span><span class="ok" style="font-size:10px">Смена 8:00–17:00 · открыта</span></div><div class="grid"><div class="card" style="padding:14px 8px;text-align:center;position:relative"><div style="font-size:26px">🧾</div><b style="font-size:12px">Заказы</b><br><span style="color:#5B6585">3 активных</span></div><div class="card" style="padding:14px 8px;text-align:center;position:relative"><div style="font-size:26px">🍽️</div><b style="font-size:12px">Меню</b><br><span style="color:#5B6585">остатки и стоп</span></div><div class="card" style="padding:14px 8px;text-align:center;position:relative"><div style="font-size:26px">🕘</div><b style="font-size:12px">История</b><br><span style="color:#5B6585">заказы смены</span></div><div class="card" style="padding:14px 8px;text-align:center;position:relative"><div style="font-size:26px">📷</div><b style="font-size:12px">Сканер QR</b><br><span style="color:#5B6585">выдача заказа</span></div></div><div class="card row2" style="margin-top:10px"><span class="cir">⏱</span><b>Смена сегодня</b><span class="sp"></span><span class="v">›</span></div></div></div><div class="d"><p class="lead">Главный экран сотрудника: отсюда идут все разделы.</p><h4>На экране</h4><ul><li>Приветствие, роль и статус смены</li><li>Четыре раздела: <b>Заказы</b>, <b>Меню</b>, <b>История</b>, <b>Сканер QR</b></li><li>На «Заказах» видно число активных заказов</li><li>Строка «Смена сегодня»: итоги и закрытие</li><li>Значок 🔔 — уведомления</li><li>Значок 👤 в правом верхнем углу — профиль</li></ul><p class="n">Из любого раздела (Заказы, Меню, История, Сканер QR, смена) назад на главный ведёт кнопка ←.</p></div></div>
+<div class="item" data-g="Главная" data-title="Уведомления" data-badge="Новый"><div class="phone fr"><div class="scr"><div class="row2" style="margin:2px 0 8px"><span class="cir">←</span><div class="h" style="margin:0;font-size:20px">Уведомления</div></div><div class="card"><div class="mr"><span class="ic">🧾</span><span><b>Новый оплаченный заказ</b><br><span class="v">Г-129 · Пирожок ×2 · сейчас</span></span></div><div class="mr"><span class="ic">⚠️</span><span><b>Бургер заканчивается</b><br><span class="v">Осталось 4 · 5 мин назад</span></span></div><div class="mr"><span class="ic">✅</span><span><b>Заказ Г-125 готов</b><br><span class="v">Повар нажал «Готово» · 12 мин</span></span></div><div class="mr"><span class="ic">🕗</span><span><b>Смена закончится в 17:00</b><br><span class="v">Не забудьте закрыть смену</span></span></div></div></div></div><div class="d"><p class="lead">Что важно знать кассиру прямо сейчас.</p><h4>На экране</h4><ul><li>Новый оплаченный заказ</li><li>Блюдо заканчивается</li><li>Повар нажал «Готово»</li><li>Напоминание о конце смены</li></ul><p class="n">Открывается значком 🔔 на главном экране.</p></div></div>
+<div class="item" data-g="Заказы" data-title="Заказы" data-badge="Изменён"><div class="phone fr"><div class="scr"><div class="row2"><span class="cir">←</span><div class="h" style="margin:0">Заказы</div><span class="sp"></span><span class="tag">Главный · Касса 1</span></div><div class="row2" style="margin:10px 0;gap:6px"><span class="chip on mini">Все 3</span><span class="chip mini">Новые 2</span><span class="chip mini">Готовы 1</span></div><div class="card" style="margin-bottom:8px"><div class="row2"><b style="font-size:13px">Г-129</b><span class="ok">Оплачен</span></div><p style="margin:5px 0">Пирожок ×2 · 400 ₸</p><div class="btn sm o">Принять</div></div><div class="card" style="margin-bottom:8px"><div class="row2"><b style="font-size:13px">Г-128</b><span class="ok">Оплачен</span></div><p style="margin:5px 0">Хот-дог ×1, Самса ×2 · 1 400 ₸ · картой</p><p style="margin:5px 0;color:#14214D">💬 Добавьте пожалуйста салфетки</p><div class="btn sm o">Принять</div></div><div class="card" style="margin-bottom:8px"><div class="row2"><b style="font-size:13px">Г-125</b><span class="tag">Готов</span></div><p style="margin:5px 0">Бургер ×1, Чай ×1 · 1 350 ₸</p><div class="btn sm l">Выдать</div></div><p style="color:#5B6585">Нажмите на заказ: состав и отмена</p></div></div><div class="d"><p class="lead">Раздел «Заказы»: то, что нужно сделать прямо сейчас.</p><h4>На экране</h4><ul><li>Три заказа: два не принятых и один готовый</li><li>Если студент оставил комментарий, он виден прямо в карточке (у Г-128: «Добавьте пожалуйста салфетки»)</li><li>Нажатие на заказ открывает его состав, кнопку отмены и выбор причины отмены</li></ul><div class="chg"><b>Что изменилось:</b> «Касса» стала разделом «Заказы», сканер и история вынесены отдельно.</div></div></div>
+<div class="item" data-g="Заказы" data-title="Заказ: отмена" data-badge="Новый"><div class="phone fr"><div class="scr"><div class="row2" style="margin:2px 0 8px"><span class="cir">←</span><b style="font-size:14px">Заказ Г-128</b><span class="sp"></span><span class="ok">Оплачен</span></div><div class="card" style="margin-bottom:10px"><div class="row2"><span>Хот-дог ×1</span><span class="sp"></span>650 ₸</div><div class="row2" style="margin-top:3px"><span>Самса ×2</span><span class="sp"></span>900 ₸</div><div class="row2" style="margin-top:5px;border-top:1px dashed #E3E6EE;padding-top:5px"><b>Итого · картой</b><span class="sp"></span><b>1 400 ₸</b></div></div><b>Причина отмены</b><div style="display:flex;flex-direction:column;gap:6px;margin:7px 0;align-items:flex-start"><span class="chip on">Студент передумал</span><span class="chip">Нет в наличии</span><span class="chip">Ошибка кассира</span></div><p style="color:#5B6585">Возврат выполняется на карту студента</p><div class="btn o" style="position:absolute;left:14px;right:14px;bottom:16px;color:#fff">Отменить · возврат 1 400 ₸</div></div></div><div class="d"><p class="lead">Открывается нажатием на любой заказ в «Заказах» или в «Истории».</p><h4>На экране</h4><ul><li>Состав и сумма заказа</li><li>Причина: студент передумал, нет в наличии, ошибка кассира</li><li>Кнопка «Отменить · возврат» с суммой</li></ul><h4>Что дальше</h4><p class="n">Деньги возвращаются на карту студента, заказ получает статус «Отменён», кухня видит отмену.</p></div></div>
+<div class="item" data-g="Сканер QR" data-title="Сканер QR выдачи" data-badge="Изменён"><div class="phone fr"><div class="scr"><div class="row2"><span class="cir">←</span><b style="font-size:13px;white-space:nowrap">Сканер QR</b><span class="sp"></span><span class="tag">Касса 1</span></div><div style="margin:12px 0;height:150px;border-radius:20px;background:#14214D;position:relative;display:grid;place-items:center"><div style="width:92px;height:92px;border:2px solid #F3DD2C;border-radius:14px"></div><span style="position:absolute;bottom:8px;font-size:10px;color:#CFD8F5">Наведите камеру на QR студента</span></div><div class="card"><div class="row2"><b style="font-size:20px">Г-128</b><span class="ok">Оплачен</span><span class="sp"></span><span class="tag">Готов</span></div><p style="margin:5px 0;color:#5B6585">Альмири У. · Главный корпус</p><div class="row2"><span>Хот-дог ×1</span><span class="sp"></span>650 ₸</div><div class="row2" style="margin-top:3px"><span>Самса ×2</span><span class="sp"></span>900 ₸</div><p style="margin:5px 0 0;color:#14214D">💬 Добавьте пожалуйста салфетки</p><div class="row2" style="margin-top:5px;border-top:1px dashed #E3E6EE;padding-top:5px"><b>Итого</b><span class="sp"></span><b>1 400 ₸</b></div></div><div class="btn" style="position:absolute;left:14px;right:14px;bottom:16px">Выдать заказ</div></div></div><div class="d"><p class="lead">Кассир сканирует QR студента и сразу видит заказ.</p><h4>На экране</h4><ul><li>Камера с рамкой для QR</li><li>Номер заказа, имя студента, состав, сумма, «Оплачен»</li><li>Комментарий студента к заказу («Добавьте пожалуйста салфетки»): кассир кладёт салфетки при выдаче</li><li>Кнопка «Выдать заказ»</li></ul><h4>Если заказ ещё готовится</h4><p class="n">Кассир видит «Готовится», кнопка выдачи неактивна.</p><h4>Что дальше</h4><p class="n">После «Выдать» заказ получает статус «Выдан», студенту начисляются бонусы.</p></div></div>
+<div class="item" data-g="История" data-title="История и поиск" data-badge="Новый"><div class="phone fr"><div class="scr"><div class="row2" style="margin-bottom:8px"><span class="cir">←</span><div class="h" style="margin:0">История</div><span class="sp"></span><span class="tag">Эта смена</span></div><div class="in" style="background:#fff;color:#5B6585;border:1px solid #E3E6EE">🔍 Номер заказа: Г-1</div><div class="card row2" style="margin-bottom:7px;padding:9px 10px"><div><b>Г-131</b><br><span style="color:#5B6585">12:41 · 1 550 ₸ · картой</span></div><span class="sp"></span><span class="ok">Выдан</span></div><div class="card row2" style="margin-bottom:7px;padding:9px 10px"><div><b>Г-130</b><br><span style="color:#5B6585">12:38 · 650 ₸ · картой</span></div><span class="sp"></span><span class="tag">Готов</span></div><div class="card row2" style="margin-bottom:7px;padding:9px 10px"><div><b>Г-129</b><br><span style="color:#5B6585">12:36 · 400 ₸ · картой</span></div><span class="sp"></span><span class="tag">В сборке</span></div><div class="card row2" style="margin-bottom:7px;padding:9px 10px"><div><b>Г-127</b><br><span style="color:#5B6585">12:20 · 650 ₸ · картой</span></div><span class="sp"></span><span class="r">Отменён</span></div><p style="color:#5B6585;margin-top:6px">Нажмите на заказ: состав, оплата, время выдачи, чек</p></div></div><div class="d"><p class="lead">Все заказы смены и поиск по номеру.</p><h4>На экране</h4><ul><li>Поиск по номеру заказа</li><li>Список: номер, время, сумма, статус</li><li>Нажатие на любой заказ открывает состав, оплату, время выдачи и чек, а также кнопку «Отменить»</li></ul><h4>Зачем</h4><p class="n">Если студент спорит или потерял QR, кассир быстро находит заказ.</p></div></div>
+<div class="item" data-g="Меню" data-title="Разделы меню" data-badge="Изменён"><div class="phone fr"><div class="scr"><div class="row2" style="margin:2px 0 8px"><span class="cir">←</span><div class="h" style="margin:0">Меню · Главный</div></div><div class="in" style="background:#fff;color:#5B6585;border:1px solid #E3E6EE">🔍 Найти блюдо</div><div class="grid"><div class="card" style="padding:12px 6px;text-align:center"><div style="font-size:24px">🥐</div><b>Выпечка</b><br><span style="color:#5B6585">6 блюд</span><br><span class="r">1 в стопе</span></div><div class="card" style="padding:12px 6px;text-align:center"><div style="font-size:24px">🍔</div><b>Фастфуд</b><br><span style="color:#5B6585">4 блюда</span><br><span class="warn" style="padding:1px 7px">Мало: 1</span></div><div class="card" style="padding:12px 6px;text-align:center"><div style="font-size:24px">🥤</div><b>Напитки</b><br><span style="color:#5B6585">7 блюд</span></div><div class="card" style="padding:12px 6px;text-align:center"><div style="font-size:24px">🍲</div><b>Горячие блюда</b><br><span style="color:#5B6585">5 блюд</span></div><div class="card" style="padding:12px 6px;text-align:center"><div style="font-size:24px">🥗</div><b>Салаты</b><br><span style="color:#5B6585">4 блюда</span></div></div><p style="color:#5B6585;margin-top:10px">Выберите раздел, внутри все блюда и остатки</p></div></div><div class="d"><p class="lead">Вместо одного длинного списка блюда разложены по разделам.</p><h4>На экране</h4><ul><li>Разделы: выпечка, фастфуд, напитки, горячие блюда, салаты</li><li>У каждого: число блюд и пометки «в стопе» или «мало»</li><li>Поиск по названию, если нужно найти сразу</li></ul><div class="chg"><b>Что изменилось:</b> список разделён на разделы, искать стало проще.</div></div></div>
+<div class="item" data-g="Меню" data-title="Выпечка: остатки и стоп" data-badge="Новый"><div class="phone fr"><div class="scr"><div class="row2"><span class="cir">←</span><div class="h" style="margin:0">Выпечка</div></div><div class="row2" style="flex-wrap:wrap;gap:5px;margin:8px 0"><span class="chip on mini">Выпечка</span><span class="chip mini">Фастфуд</span><span class="chip mini">Напитки</span><span class="chip mini">Горячие блюда</span><span class="chip mini">Салаты</span></div><div class="card" style="margin-bottom:7px;padding:9px 10px"><div class="row2"><span style="font-size:20px">🥟</span><b style="font-size:12px">Самса</b><span class="sp"></span><span class="ok" style="padding:2px 8px;font-size:10px">В наличии</span></div><div class="row2" style="margin-top:8px"><span class="cir">−</span><b style="min-width:26px;text-align:center;font-size:14px">20</b><span class="cir" style="background:#F3DD2C;border:0">+</span><span class="sp"></span><span class="chip mini" style="background:#fff;padding:6px 16px">Стоп</span></div></div><div class="card" style="margin-bottom:7px;padding:9px 10px"><div class="row2"><span style="font-size:20px">🥐</span><b style="font-size:12px">Пирожок</b><span class="sp"></span><span class="r" style="background:#FBE3E3;border-radius:99px;padding:2px 8px;font-size:10px">Закончилось</span></div><div class="row2" style="margin-top:8px"><span class="cir">−</span><b style="min-width:26px;text-align:center;font-size:14px">0</b><span class="cir" style="background:#F3DD2C;border:0">+</span><span class="sp"></span><span class="chip mini" style="background:#fff;padding:6px 16px">Стоп</span></div></div><div class="card" style="margin-bottom:7px;padding:9px 10px;background:#F1F2F6"><div class="row2"><span style="font-size:20px;opacity:.5">🥧</span><b style="font-size:12px">Беляш</b><span class="sp"></span><span class="r" style="background:#FBE3E3;border-radius:99px;padding:2px 8px;font-size:10px">В стопе</span></div><div class="row2" style="margin-top:8px"><span style="color:#5B6585;font-size:11px;white-space:nowrap">Остаток: <b style="font-size:13px">3</b></span><span class="sp"></span><span class="chip mini" style="background:#1B3A9E;border-color:#1B3A9E;color:#fff;padding:6px 10px;white-space:nowrap;font-size:11px">Вернуть в меню</span></div></div><p style="color:#7A5A00;font-size:10px;margin-top:4px">● Есть несохранённые изменения: Беляш</p><div class="btn o" style="position:absolute;left:14px;right:14px;bottom:16px;color:#fff">Сохранить</div></div></div><div class="d"><p class="lead">Всё для одного раздела на одном экране.</p><h4>На экране</h4><ul><li>Вкладки сверху: выпечка, фастфуд, напитки, горячие блюда, салаты. Переключение без возврата назад</li><li>Каждое блюдо — карточка из двух строк: сверху название и статус, снизу кнопка − (уменьшить), число, кнопка + (увеличить) и «Стоп» справа</li><li>Кнопка «Стоп» ставит блюдо на паузу одним нажатием (в примере Беляш уже поставлен в стоп). Блюдо в стопе серое, помечено «В стопе», а вместо «Стоп» появляется синяя кнопка «Вернуть в меню»</li><li>«Вернуть в меню» снимает стоп: после «Сохранить» блюдо снова видно студентам, количество сохраняется</li><li><b>Кнопка «Сохранить»</b> внизу. Пока её не нажали, стоп и остатки не уходят в меню студентов, а на экране горит пометка о несохранённых изменениях</li><li>Закончилось — красная пометка, мало — жёлтая</li></ul><h4>Что дальше</h4><p class="n">После «Сохранить» студенты этой столовой видят изменения сразу. Если блюдо уже есть в оплаченном заказе, кассир открывает заказ и отменяет его с причиной «Нет в наличии».</p></div></div>
+<div class="item" data-g="Смена и профиль" data-title="Смена сегодня" data-badge="Изменён"><div class="phone fr"><div class="scr"><div class="row2" style="margin-bottom:8px"><span class="cir">←</span><div class="h" style="margin:0">Смена сегодня</div><span class="sp"></span><span class="ok">Открыта</span></div><div class="grid"><div class="card"><span>Выдано</span><div class="h" style="margin:2px 0">84</div></div><div class="card"><span>Оплаты картой</span><div class="h" style="margin:2px 0">62 400 ₸</div></div><div class="card"><span>Отмены</span><div class="h" style="margin:2px 0">3</div></div><div class="card"><span>Возвраты</span><div class="h" style="margin:2px 0">1 800 ₸</div></div></div><div class="card" style="margin-top:8px"><span class="warn">Не в сумме</span> 2 неоплаченных заказа, 1 900 ₸</div><div class="btn o" style="position:absolute;left:14px;right:14px;bottom:16px;color:#fff">Закрыть смену</div></div></div><div class="d"><p class="lead">Итоги смены и закрытие.</p><h4>На экране</h4><ul><li>Статус смены, выдано заказов</li><li>Оплаты картой</li><li>Отмены и возвраты</li><li>Плашка «Не в сумме» для заказов без оплаты</li><li>Кнопка «Закрыть смену»</li></ul><div class="chg"><b>Что изменилось:</b> убраны «Наличные», остались только оплаты картой.</div></div></div>
+<div class="item" data-g="Смена и профиль" data-title="История смен" data-badge="Новый"><div class="phone fr"><div class="scr"><div class="row2" style="margin:2px 0 8px"><span class="cir">←</span><div class="h" style="margin:0">История смен</div></div><div class="in" style="background:#fff;color:#5B6585;border:1px solid #E3E6EE">🔍 Дата или имя кассира</div><div class="card" style="margin-bottom:7px;padding:9px 10px"><div class="row2"><b>14 окт, ср</b><span class="sp"></span><span class="warn">Открыта</span></div><p style="margin:3px 0 0;color:#5B6585">Искандер Адильбаев · Касса 1</p><p style="margin:3px 0 0">07:56–идёт · заказов 84 · 62 400 ₸</p></div><div class="card" style="margin-bottom:7px;padding:9px 10px"><div class="row2"><b>13 окт, вт</b><span class="sp"></span><span class="ok">Закрыта</span></div><p style="margin:3px 0 0;color:#5B6585">Искандер Адильбаев · Касса 1</p><p style="margin:3px 0 0">07:58–17:04 · заказов 91 · 68 950 ₸</p></div><div class="card" style="margin-bottom:7px;padding:9px 10px"><div class="row2"><b>12 окт, пн</b><span class="sp"></span><span class="ok">Закрыта</span></div><p style="margin:3px 0 0;color:#5B6585">Искандер Адильбаев · Касса 1</p><p style="margin:3px 0 0">08:03–17:01 · заказов 77 · 55 100 ₸</p></div><div class="card" style="margin-bottom:7px;padding:9px 10px"><div class="row2"><b>10 окт, сб</b><span class="sp"></span><span class="ok">Закрыта</span></div><p style="margin:3px 0 0;color:#5B6585">Искандер Адильбаев · Касса 1</p><p style="margin:3px 0 0">07:55–17:09 · заказов 69 · 49 800 ₸</p></div><p style="color:#5B6585;margin-top:4px">Нажмите на смену, чтобы увидеть подробности</p></div></div><div class="d"><p class="lead">Все смены кассира списком.</p><h4>На экране</h4><ul><li>Дата и день недели</li><li>Имя и фамилия кассира, касса</li><li>Во сколько смену открыли и закрыли</li><li>Число заказов и сумма оплат картой</li><li>Статус «Открыта» или «Закрыта»</li><li>Поиск по дате или имени</li></ul><p class="n">Кассир видит свои смены. Менеджер и админ видят смены всех сотрудников. Имя и время ниже — пример.</p><h4>Как попасть</h4><p class="n">Профиль → История смен. Нажатие на смену открывает её детали (экран «Детали смены»).</p></div></div>
+<div class="item" data-g="Смена и профиль" data-title="Детали смены" data-badge="Новый"><div class="phone fr"><div class="scr"><div class="row2" style="margin:2px 0 8px"><span class="cir">←</span><div class="h" style="margin:0">Смена 13 октября</div></div><div class="card" style="padding:2px 12px;margin-bottom:8px"><div class="mr" style="padding:6px 0"><span class="v">Кассир</span><span class="sp"></span><b class="">Искандер Адильбаев</b></div><div class="mr" style="padding:6px 0"><span class="v">Корпус · касса</span><span class="sp"></span><b class="">Главный · Касса 1</b></div><div class="mr" style="padding:6px 0"><span class="v">Дата</span><span class="sp"></span><b class="">13.10.2026, вторник</b></div><div class="mr" style="padding:6px 0"><span class="v">План смены</span><span class="sp"></span><b class="">8:00–17:00</b></div><div class="mr" style="padding:6px 0"><span class="v">Открыта</span><span class="sp"></span><b class="">07:58</b></div><div class="mr" style="padding:6px 0"><span class="v">Закрыта</span><span class="sp"></span><b class="">17:04</b></div></div><div class="card" style="padding:2px 12px"><div class="mr" style="padding:6px 0"><span class="v">Касса на старте</span><span class="sp"></span><b>5 000 ₸</b></div><div class="mr" style="padding:6px 0"><span class="v">Касса при закрытии</span><span class="sp"></span><b class="">5 000 ₸</b></div><div class="mr" style="padding:6px 0"><span class="v">Выдано заказов</span><span class="sp"></span><b class="">91</b></div><div class="mr" style="padding:6px 0"><span class="v">Оплаты картой</span><span class="sp"></span><b class="">68 950 ₸</b></div><div class="mr" style="padding:6px 0"><span class="v">Отмены</span><span class="sp"></span><b class="">3</b></div><div class="mr" style="padding:6px 0"><span class="v">Возвраты</span><span class="sp"></span><b class="r">1 800 ₸</b></div></div></div></div><div class="d"><p class="lead">Подробности одной смены: главное для проверки.</p><h4>На экране</h4><ul><li>Кто работал: имя, фамилия, корпус и касса</li><li>Дата, плановое время, когда открыта и закрыта</li><li>Касса на старте и при закрытии, расхождение</li><li>Выдано заказов, оплаты картой</li><li>Отмены и возвраты</li></ul><p class="n">Если смену открыли с опозданием или закрыли раньше, это видно по времени.</p></div></div>
+<div class="item" data-g="Смена и профиль" data-title="Профиль сотрудника" data-badge="Новый"><div class="phone fr"><div class="scr"><div class="row2" style="margin:2px 0 8px"><span class="cir">←</span><div class="h" style="margin:0">Профиль</div><span class="sp"></span><span class="chip mini">Изменить</span></div><div class="pf">И</div><div style="text-align:center;margin:6px 0 10px"><b style="font-size:14px">Искандер</b><br><span class="tag" style="display:inline-block;margin-top:4px">Кассир</span></div><div class="card" style="padding:2px 12px;margin-bottom:8px"><div class="mr"><span class="ic">⚙️</span><b>Настройки</b><span class="sp"></span><span class="v">›</span></div></div><div class="card" style="padding:2px 12px;margin-bottom:8px"><div class="mr"><span class="ic">📍</span><span>Корпус и касса</span><span class="sp"></span><span class="v">Главный · 1 ›</span></div><div class="mr"><span class="ic">🕗</span><span>Моя смена</span><span class="sp"></span><span class="v">8:00–17:00 ›</span></div><div class="mr"><span class="ic">🧾</span><span>История смен</span><span class="sp"></span><span class="v">›</span></div></div><div class="btn" style="background:#fff;color:#A32D2D;border:1px solid #F0C9C9;margin-top:10px">Выйти из аккаунта</div></div></div><div class="d"><p class="lead">Личный кабинет сотрудника, по образцу студенческого.</p><h4>На экране</h4><ul><li>Аватар, имя и роль</li><li><b>Настройки</b>: язык, звуки, смена пароля и почты, помощь (следующий экран)</li><li><b>Корпус и касса</b>, <b>Моя смена</b> и <b>История смен</b>: у каждого свой экран, нарисованы дальше</li><li>Красная кнопка «Выйти из аккаунта»</li></ul><p class="n">Нет разделов «Бонусы» и «Способ оплаты». Роль меняет только администратор. Попасть сюда можно значком 👤 на главном экране.</p></div></div>
+<div class="item" data-g="Смена и профиль" data-title="Настройки сотрудника" data-badge="Новый"><div class="phone fr"><div class="scr"><div class="row2" style="margin:2px 0 10px"><span class="cir">←</span><div class="h" style="margin:0">Настройки</div></div><div class="card" style="padding:2px 12px"><div class="mr"><span class="ic">🔔</span><span>Звуки и уведомления</span><span class="sp"></span><span class="v">›</span></div><div class="mr"><span class="ic">🌐</span><span>Язык</span><span class="sp"></span><span class="v">Русский ›</span></div><div class="mr"><span class="ic">🔒</span><span>Сменить пароль</span><span class="sp"></span><span class="v">›</span></div><div class="mr"><span class="ic">✉️</span><span>Сменить почту</span><span class="sp"></span><span class="v">›</span></div><div class="mr"><span class="ic">❓</span><span>Помощь</span><span class="sp"></span><span class="v">›</span></div></div></div></div><div class="d"><p class="lead">Настройки сотрудника: такие же, как у студента.</p><h4>Что внутри</h4><ul><li><b>Звуки и уведомления:</b> звук и вибрация для новых заказов, «Блюдо заканчивается», «Повар нажал Готово», напоминание о конце смены</li><li><b>Язык:</b> русский или казахский</li><li><b>Сменить пароль:</b> старый пароль, затем новый и повтор</li><li><b>Сменить почту:</b> вводится новая почта @gmail.com, на неё приходит код подтверждения</li><li><b>Помощь:</b> связаться с поддержкой, о приложении, политика конфиденциальности</li></ul><h4>Чем отличается от студента</h4><p class="n">Ничем: экраны звуков, языка, пароля, почты и помощи такие же, как у студента. Отличаются только примеры уведомлений.</p><h4>Как попасть</h4><p class="n">Профиль → Настройки.</p></div></div>
+<div class="item" data-g="Смена и профиль" data-title="Корпус и касса" data-badge="Новый"><div class="phone fr"><div class="scr"><div class="row2" style="margin:2px 0 10px"><span class="cir">←</span><div class="h" style="margin:0">Корпус и касса</div></div><div class="card" style="padding:2px 12px;margin-bottom:8px"><div class="mr"><span class="ic">📍</span><span>Корпус</span><span class="sp"></span><b>Главный</b></div><div class="mr"><span class="ic">💳</span><span>Касса</span><span class="sp"></span><b>Касса 1</b></div></div><div class="card" style="padding:2px 12px"><div class="mr"><span class="ic">🛡️</span><span>Роль</span><span class="sp"></span><span class="tag">Кассир</span></div></div><p style="color:#5B6585;margin-top:10px;font-size:10px">Корпус и кассу назначает менеджер или администратор. Заказы и меню на главном экране показываются только для этого корпуса.</p></div></div><div class="d"><p class="lead">Где сотрудник работает: корпус и касса.</p><h4>На экране</h4><ul><li>Корпус и номер кассы</li><li>Роль сотрудника</li></ul><h4>Зачем</h4><p class="n">Все заказы, остатки и стоп-лист на главном экране относятся к этому корпусу. Сотрудник сам их не меняет: корпус и кассу назначает менеджер или администратор, поэтому экран только для просмотра.</p><h4>Как попасть</h4><p class="n">Профиль → Корпус и касса.</p></div></div>
+<div class="item" data-g="Смена и профиль" data-title="Моя смена" data-badge="Новый"><div class="phone fr"><div class="scr"><div class="row2" style="margin:2px 0 10px"><span class="cir">←</span><div class="h" style="margin:0">Моя смена</div></div><div class="card" style="margin-bottom:8px"><div class="row2"><b>Сегодня, 14 окт, ср</b><span class="sp"></span><span class="ok">Открыта</span></div><p style="margin-top:5px">План: <b>8:00–17:00</b> · открыта в 07:58</p><p style="margin-top:3px;color:#5B6585">Касса на старте: 5 000 ₸</p></div><p style="color:#5B6585;font-size:10px;margin:2px 0 4px;text-transform:uppercase;letter-spacing:.05em">График на неделю</p><div class="card" style="padding:2px 12px"><div class="mr" style="padding:6px 0"><span>Пн, 12 окт</span><span class="sp"></span><span class="v">8:00–17:00</span></div><div class="mr" style="padding:6px 0"><span>Вт, 13 окт</span><span class="sp"></span><span class="v">8:00–17:00</span></div><div class="mr" style="padding:6px 0"><b>Ср, 14 окт</b><span class="sp"></span><b>8:00–17:00</b></div><div class="mr" style="padding:6px 0"><span>Чт, 15 окт</span><span class="sp"></span><span class="v">8:00–17:00</span></div><div class="mr" style="padding:6px 0"><span>Пт, 16 окт</span><span class="sp"></span><span class="v">8:00–17:00</span></div></div><p style="color:#5B6585;margin-top:6px;font-size:10px">Сб и вс — выходные</p><div class="btn o" style="position:absolute;left:14px;right:14px;bottom:16px;color:#fff">Итоги смены сегодня</div></div></div><div class="d"><p class="lead">График сотрудника и состояние сегодняшней смены.</p><h4>На экране</h4><ul><li>Сегодняшняя смена: плановое время, во сколько открыта, касса на старте</li><li>График на неделю, сегодняшний день выделен</li><li>Кнопка «Итоги смены сегодня» ведёт на экран «Смена сегодня»</li></ul><h4>Зачем</h4><p class="n">Сотрудник заранее видит, когда выходит на работу. Менять график может только менеджер или администратор.</p><h4>Как попасть</h4><p class="n">Профиль → Моя смена.</p></div></div>
+<div class="item" data-g="Кухня и выдача" data-title="Кухня (планшет)"><div class="adm fr"><div class="main" style="display:flex;gap:8px">
+<div class="col"><b>НОВЫЕ 2</b><div class="kc"><b>Г-128</b> <span class="ok">Оплачен</span><br/>Хот-дог ×1, Самса ×2, Чай ×1<div class="btn sm o" style="margin-top:6px">Принять</div></div><div class="kc"><b>Г-129</b><br/>Пирожок ×2<div class="btn sm o" style="margin-top:6px">Принять</div></div></div>
+<div class="col"><b>В РАБОТЕ 1</b><div class="kc"><b>Г-125</b><br/>Бургер ×1, Чай ×1<div class="btn sm l" style="margin-top:6px">Готово</div></div></div>
+<div class="col"><b>ГОТОВО 1</b><div class="kc"><b>Г-124</b><br/>Самса ×2<div class="btn sm" style="margin-top:6px">Выдан</div></div></div>
+</div></div><div class="d"><p class="lead">Экран повара: три колонки по этапам.</p><h4>На экране</h4><ul><li>Новые — кнопка «Принять»</li><li>В работе — кнопка «Готово»</li><li>Готово — кнопка «Выдан»</li><li>Состав заказа крупно, чтобы читать издалека</li></ul><h4>Что дальше</h4><p class="n">Готовый заказ отправляет студенту уведомление.</p></div></div>
+<div class="item" data-g="Кухня и выдача" data-title="Экран выдачи (ТВ)"><div class="adm fr" style="background:#1B3A9E;color:#fff;position:relative"><div class="sun" style="right:-50px;bottom:-50px;width:160px;height:160px"></div><div class="main" style="display:flex;gap:20px;position:relative">
+<div class="sp"><div class="h" style="color:#F3DD2C">ГОТОВЫ · заберите</div><div style="font-size:30px;font-weight:500;line-height:1.5">Г-124 · стойка 2<br/>Г-128 · стойка 2</div></div>
+<div class="sp"><div class="h">Готовятся</div><div style="font-size:20px;line-height:1.7">Г-125<br/>Г-129<br/>Г-130</div></div></div></div><div class="d"><p class="lead">Большой экран над стойкой: студенты сами видят, что готово.</p><h4>На экране</h4><ul><li>Слева: «Готовы, заберите» с номером и стойкой</li><li>Справа: «Готовятся»</li><li>Крупный шрифт, читается через зал</li></ul><h4>Что дальше</h4><p class="n">Показывается в браузере телевизора, ничего устанавливать не надо.</p></div></div>
+</section>
+<!-- ADMIN -->
+<section class="row" id="a">
+<div class="item" data-g="Обзор" data-title="Дашборд" data-badge="Изменён"><div class="adm fr" data-p="Дашборд"><div class="main"><div class="row2"><div class="h" style="margin:0">Сегодня</div><span class="sp"></span><span class="chip mini on" style="margin-right:5px">Все корпуса ▾</span><span class="chip mini" style="margin-right:5px">RU/KZ</span></div><div class="kpis"><div><span>Заказов</span><b>312</b></div><div><span>Выручка</span><b>186 400 ₸</b></div><div><span>Средний чек</span><b>597 ₸</b></div><div><span>Ожидание</span><b>6 мин</b></div></div><div class="row2" style="align-items:flex-start;gap:10px"><div class="card sp"><b>Заказы по корпусам</b><p style="margin-top:6px">Главный · 168</p><div class="bar"><i style="width:90%"></i></div><p style="margin-top:6px">Корпус Б · 96</p><div class="bar"><i style="width:52%"></i></div><p style="margin-top:6px">Корпус С · 48</p><div class="bar"><i style="width:26%"></i></div></div><div class="card sp"><b>Требует внимания</b><p style="margin-top:7px">💬 <b>5</b> новых комментариев</p><p style="margin-top:6px">⚠️ Бургер (С): мало, 4 шт.</p><p style="margin-top:6px">↩️ 1 возврат ждёт решения</p><p style="margin-top:6px">⏱ Очередь Г: 9 заказов</p></div></div><div class="card" style="margin-top:8px"><b>Популярное:</b> 🌭 74 · 🥟 61 · 🥐 58 · 🥤 40 <span style="color:#5B6585"> | Стоп-лист:</span> <span class="r">Пирожок (Г)</span></div></div></div><div class="d"><p class="lead">Главная страница менеджера: картина дня одним взглядом.</p><h4>На экране</h4><ul><li>Заказы, выручка, <b>средний чек</b> и ожидание</li><li>Заказы по корпусам</li><li><b>Блок «Требует внимания»</b>: новые комментарии студентов, мало остатков, возвраты, очередь. Нажали — открылся нужный раздел</li><li>Популярные блюда и стоп-лист</li><li>Фильтр «Все корпуса» меняет все цифры</li></ul><div class="chg"><b>Что изменилось:</b> добавили средний чек и блок «Требует внимания», чтобы менеджер сразу видел, что делать.</div></div></div>
+<div class="item" data-g="Меню и склад" data-title="Меню" data-badge="Изменён"><div class="adm fr" data-p="Меню"><div class="main"><div class="row2"><div class="h" style="margin:0">Меню</div><span class="sp"></span><span class="chip mini" style="margin-right:5px">🔍 Поиск</span><span class="btn sm" style="display:inline-block">+ Блюдо</span></div><div style="margin-top:8px"><span class="chip mini on" style="margin-right:5px">Все</span><span class="chip mini" style="margin-right:5px">Выпечка</span><span class="chip mini" style="margin-right:5px">Фастфуд</span><span class="chip mini" style="margin-right:5px">Напитки</span></div><table class="tb" style="margin-top:8px"><tr><th>Блюдо</th><th>Категория</th><th>Цена</th><th>Расписание</th><th>Доступно</th><th></th></tr><tr><td>🌭 Хот-дог</td><td>Фастфуд</td><td>650 ₸</td><td>пн–пт 9–16</td><td><span class="g">Да</span></td><td>✏️</td></tr><tr><td>🥟 Самса</td><td>Выпечка</td><td>450 ₸</td><td>пн–пт 9–16</td><td><span class="g">Да</span></td><td>✏️</td></tr><tr><td>🥐 Пирожок</td><td>Выпечка</td><td>200 ₸</td><td>пн–пт 8–16</td><td><span class="r">Стоп</span></td><td>✏️</td></tr><tr><td>🍔 Бургер</td><td>Фастфуд</td><td>1 200 ₸</td><td>пн–пт 11–15</td><td><span class="g">Да</span></td><td>✏️</td></tr><tr><td>🥤 Чай</td><td>Напитки</td><td>150 ₸</td><td>весь день</td><td><span class="g">Да</span></td><td>✏️</td></tr></table></div></div><div class="d"><p class="lead">Список всех блюд и быстрые настройки.</p><h4>На экране</h4><ul><li>Поиск и фильтр по категории</li><li>Цена, расписание и статус «Да» или «Стоп»</li><li>Карандаш ✏️ открывает редактор блюда</li><li>Кнопка «+ Блюдо» добавляет новое</li></ul><p class="n" style="margin-top:12px">Статус «Стоп» можно переключить прямо в списке: блюдо сразу пропадает из меню студентов.</p></div></div>
+<div class="item" data-g="Меню и склад" data-title="Редактор блюда" data-badge="Новый"><div class="adm fr" data-p="Меню"><div class="main"><div class="row2"><div class="h" style="margin:0">Хот-дог</div><span class="sp"></span><span class="ok">Доступно</span></div><div class="row2" style="align-items:flex-start;gap:12px;margin-top:10px"><div style="width:120px"><div class="ph" style="font-size:48px">🌭</div><div class="btn o sm" style="margin-top:6px">Загрузить фото</div></div><div class="sp"><div class="in w s">Название (RU): Хот-дог</div><div class="in w s">Название (KZ): Хот-дог</div><div class="row2" style="gap:6px"><div class="in w s sp">Категория: Фастфуд</div><div class="in w s sp">Цена: 650 ₸</div></div><p style="color:#5B6585;margin:4px 0">Цена по корпусам: Главный 650 · Б 650 · С 700</p><p style="margin:6px 0 4px"><b>Модификаторы</b></p><span class="chip mini" style="margin-right:5px">соус</span><span class="chip mini" style="margin-right:5px">+ чай</span><p style="margin:8px 0 4px"><b>Расписание</b></p><span class="chip mini" style="margin-right:5px">Пн–Пт</span><span class="chip mini" style="margin-right:5px">9:00–16:00</span></div></div><div class="row2" style="margin-top:10px;gap:8px"><span class="btn sm" style="background:#fff;border:1px solid #E3E6EE">Отмена</span><span class="sp"></span><span class="r">Удалить</span><span class="btn sm o" style="display:inline-block">Сохранить</span></div></div></div><div class="d"><p class="lead">Все настройки одного блюда в одном месте.</p><h4>На экране</h4><ul><li>Фото, название на русском и казахском</li><li>Категория и цена: общая и своя для каждого корпуса</li><li>Модификаторы (соусы, добавки) и расписание продаж</li><li>Кнопки «Сохранить», «Отмена» и «Удалить»</li></ul><p class="n" style="margin-top:12px">Каждое изменение цены записывается в журнал действий: кто, когда и с какого значения на какое.</p></div></div>
+<div class="item" data-g="Меню и склад" data-title="Склад" data-badge="Изменён"><div class="adm fr" data-p="Склад"><div class="main"><div class="row2"><div class="h" style="margin:0">Склад</div><span class="sp"></span><span class="btn sm" style="display:inline-block;margin-right:5px">Списание</span><span class="btn sm o" style="display:inline-block">Приход</span></div><table class="tb" style="margin-top:10px"><tr><th>Блюдо</th><th>Корпус</th><th>Остаток</th><th>Резерв</th><th>Мин.</th><th>Статус</th></tr><tr><td>🥐 Пирожок</td><td>Главный</td><td>0</td><td>0</td><td>10</td><td><span class="r">Авто-стоп</span></td></tr><tr><td>🥟 Самса</td><td>Главный</td><td>20</td><td>3</td><td>10</td><td><span class="g">Норма</span></td></tr><tr><td>🍔 Бургер</td><td>Корпус С</td><td>4</td><td>1</td><td>5</td><td><span class="warn">Мало</span></td></tr><tr><td>🌭 Хот-дог</td><td>Корпус Б</td><td>35</td><td>2</td><td>10</td><td><span class="g">Норма</span></td></tr></table><div class="card" style="margin-top:8px"><b>Последние движения</b><p style="margin-top:5px">+50 Самса (Главный) · приход · Айгерим · 08:10</p><p style="margin-top:4px">−2 Хот-дог (Б) · списание: брак · Мадина · 11:40</p></div></div></div><div class="d"><p class="lead">Остатки по корпусам и история их движения.</p><h4>На экране</h4><ul><li>Остаток, <b>резерв под оплаченные онлайн-заказы</b>, минимум</li><li>Статус: норма, мало или авто-стоп</li><li>Кнопки «Приход» и «Списание» с причиной</li><li>Последние движения: кто и что провёл</li></ul><p class="n" style="margin-top:12px">Студент видит «Закончилось», когда остаток минус резерв дошёл до нуля.</p></div></div>
+<div class="item" data-g="Заказы" data-title="Заказы" data-badge="Изменён"><div class="adm fr" data-p="Заказы"><div class="main"><div class="row2"><div class="h" style="margin:0">Заказы</div><span class="sp"></span><span class="chip mini" style="margin-right:5px">🔍 Поиск</span><span class="chip mini" style="margin-right:5px">Все корпуса ▾</span></div><div style="margin-top:8px"><span class="chip mini on" style="margin-right:5px">Все</span><span class="chip mini" style="margin-right:5px">Готовятся</span><span class="chip mini" style="margin-right:5px">Готовы</span><span class="chip mini" style="margin-right:5px">Выданы</span><span class="chip mini" style="margin-right:5px">Отменены</span></div><table class="tb" style="margin-top:8px"><tr><th>№</th><th>Корпус</th><th>Статус</th><th>Сумма</th><th>💬</th><th>Действие</th></tr><tr><td>Г-128</td><td>Главный</td><td>Готовится</td><td>1 400 ₸</td><td>💬</td><td>Подробнее</td></tr><tr><td>Б-045</td><td>Корпус Б</td><td>Готов</td><td>850 ₸</td><td>💬</td><td>Подробнее</td></tr><tr><td>С-012</td><td>Корпус С</td><td>Выдан</td><td>400 ₸</td><td>—</td><td>Возврат</td></tr><tr><td>Г-127</td><td>Главный</td><td>Отменён</td><td>650 ₸</td><td>—</td><td>Возвращено</td></tr></table></div></div><div class="d"><p class="lead">Все заказы со всех корпусов.</p><h4>На экране</h4><ul><li>Поиск и фильтры по корпусу и статусу</li><li>Значок 💬: у заказа есть комментарий студента</li><li>Кнопка «Подробнее» открывает заказ</li></ul><p class="n" style="margin-top:12px">Возврат по Kaspi идёт на карту студента.</p></div></div>
+<div class="item" data-g="Заказы" data-title="Заказ: детали и возврат" data-badge="Новый"><div class="adm fr" data-p="Заказы"><div class="main"><div class="row2"><div class="h" style="margin:0">Заказ Г-128</div><span class="sp"></span><span class="warn">Готовится</span></div><div class="row2" style="align-items:flex-start;gap:10px;margin-top:10px"><div class="card sp"><b>Состав</b><p style="margin-top:6px">Хот-дог · 650 ₸</p><p style="margin-top:3px">Самса ×2 · 900 ₸</p><p style="margin-top:3px;color:#5B6585">Бонусы: −150 ₸</p><p style="margin-top:6px"><b>К оплате: 1 400 ₸</b> <span class="g">Kaspi ✓</span></p></div><div class="card sp"><b>Студент</b><p style="margin-top:6px">Алмира У. · Главный корпус</p><p style="margin-top:6px;color:#5B6585">Ход заказа</p><p style="margin-top:3px"><span class="g">✓</span> 12:31 Оплачен</p><p style="margin-top:3px"><span class="g">✓</span> 12:33 Принят кассой</p><p style="margin-top:3px">● Готовится</p></div></div><div class="card" style="margin-top:8px;background:#FFF6C2"><b>💬 Комментарий студента</b><p style="margin-top:4px">Добавьте пожалуйста салфетки</p></div><div class="row2" style="margin-top:10px;gap:8px"><span class="btn sm" style="background:#fff;border:1px solid #F0C9C9;color:#A32D2D;display:inline-block">Отмена с возвратом</span><span class="btn sm" style="background:#fff;border:1px solid #E3E6EE;display:inline-block">Частичный возврат</span></div></div></div><div class="d"><p class="lead">Полная карточка заказа для менеджера.</p><h4>На экране</h4><ul><li>Состав, бонусы и сумма к оплате</li><li>Студент и ход заказа по времени</li><li><b>Комментарий студента</b>: то же, что видит кассир</li><li>Отмена с возвратом или частичный возврат</li></ul><p class="n" style="margin-top:12px">Причину возврата нужно указать: она попадает в журнал действий.</p></div></div>
+<div class="item" data-g="Комментарии" data-title="Комментарии студентов" data-badge="Новый"><div class="adm fr" data-p="Комментарии"><div class="main"><div class="row2"><div class="h" style="margin:0">Комментарии</div><span class="sp"></span><span class="chip mini" style="margin-right:5px">🔍 Поиск</span><span class="chip mini" style="margin-right:5px">Все корпуса ▾</span></div><div style="margin:8px 0"><span class="chip mini on" style="margin-right:5px">Все 128</span><span class="chip mini" style="margin-right:5px">Новые 5</span><span class="chip mini" style="margin-right:5px">Важные 2</span><span class="chip mini" style="margin-right:5px">Сегодня</span></div><div class="card" style="padding:7px 10px;margin-bottom:5px"><div class="row2"><b>Алмира У.</b><span class="tag">Г-128</span><span style="color:#5B6585">Главный · 12:31</span><span class="sp"></span><span class="warn">Новый</span></div><p style="margin-top:3px">Добавьте пожалуйста салфетки</p></div><div class="card" style="padding:7px 10px;margin-bottom:5px;border:1px solid #F0C9C9"><div class="row2"><b>Данияр К.</b><span class="tag">Б-045</span><span style="color:#5B6585">Корпус Б · 12:20</span><span class="sp"></span><span class="warn">Новый</span></div><p style="margin-top:3px">⚠️ Без лука, у меня аллергия</p></div><div class="card" style="padding:7px 10px;margin-bottom:5px"><div class="row2"><b>Асель Т.</b><span class="tag">Г-126</span><span style="color:#5B6585">Главный · 12:05</span><span class="sp"></span><span class="tag">Прочитано</span></div><p style="margin-top:3px">Подогрейте самсу, пожалуйста</p></div><div class="card" style="padding:7px 10px;margin-bottom:5px"><div class="row2"><b>Нурлан С.</b><span class="tag">С-011</span><span style="color:#5B6585">Корпус С · 11:48</span><span class="sp"></span><span class="ok">Учтено</span></div><p style="margin-top:3px">Буду через 10 минут, не отдавайте</p></div></div></div><div class="d"><p class="lead">Все комментарии, которые студенты пишут к заказам при оформлении.</p><h4>На экране</h4><ul><li>Имя студента, номер заказа, корпус и время</li><li>Текст комментария целиком</li><li>Статус: «Новый», «Прочитано», «Учтено»</li><li>Фильтры: новые, важные, за сегодня, по корпусу, поиск</li><li><b>Важные</b> подсвечены красным: комментарии со словами «аллергия», «без»</li></ul><p class="n" style="margin-top:12px">Нажатие на комментарий открывает заказ. Кассир видит тот же текст в своём заказе, а менеджер отмечает, что учли. Здесь же видно, какие просьбы повторяются (салфетки, «без лука»): их можно сделать готовыми модификаторами в меню.</p><div class="chg"><b>Новый раздел:</b> комментарии студентов собраны в одном месте, ничего не теряется.</div></div></div>
+<div class="item" data-g="Бонусы и отчёты" data-title="Бонусы" data-badge="Новый"><div class="adm fr" data-p="Бонусы"><div class="main"><div class="row2"><div class="h" style="margin:0">Бонусы</div><span class="sp"></span><span class="btn sm o" style="display:inline-block">Сохранить</span></div><div class="row2" style="align-items:flex-start;gap:10px;margin-top:10px"><div class="card" style="flex:1.3"><b>Уровни и проценты</b><table class="tb" style="margin-top:6px"><tr><th>Уровень</th><th>За 30 дней</th><th>%</th></tr><tr><td>🌱 Первокурсник</td><td>до 10 000 ₸</td><td>3%</td></tr><tr><td>🎓 Студент</td><td>10 000–24 999</td><td>5%</td></tr><tr><td>⭐ Отличник</td><td>25 000–39 999</td><td>7%</td></tr><tr><td>👑 Ректор</td><td>от 40 000 ₸</td><td>10%</td></tr></table></div><div class="sp"><div class="card"><div class="row2"><b>⚡ Счастливый час</b><span class="sp"></span><span class="tg on"></span></div><p style="margin-top:5px">Пн–Пт 16:00–17:00 · ×2</p></div><div class="card" style="margin-top:8px"><b>Срок действия</b><p style="margin-top:4px">3 месяца, старые сгорают первыми</p></div></div></div><div class="card" style="margin-top:8px"><b>Найти студента</b> <span style="color:#5B6585">— посмотреть баланс или скорректировать вручную (+/−, причина)</span></div></div></div><div class="d"><p class="lead">Правила бонусной программы без программиста.</p><h4>На экране</h4><ul><li>Таблица уровней: порог и процент</li><li>Счастливый час: включить, время, множитель</li><li>Срок жизни бонусов</li><li>Поиск студента: баланс, история и ручная корректировка</li></ul><p class="n" style="margin-top:12px">Меняются только числа. Новые правила действуют для заказов, оформленных после сохранения.</p></div></div>
+<div class="item" data-g="Бонусы и отчёты" data-title="Отчёты" data-badge="Новый"><div class="adm fr" data-p="Отчёты"><div class="main"><div class="row2"><div class="h" style="margin:0">Отчёты</div><span class="sp"></span><span class="chip mini" style="margin-right:5px">Сегодня</span><span class="chip mini on" style="margin-right:5px">Неделя</span><span class="chip mini" style="margin-right:5px">Месяц</span><span class="chip mini" style="margin-right:5px">Все корпуса ▾</span></div><div class="kpis"><div><span>Выручка</span><b>1,2 млн ₸</b></div><div><span>Заказов</span><b>2 014</b></div><div><span>Ср. чек</span><b>602 ₸</b></div><div><span>Возвраты</span><b>9</b></div></div><div class="card"><b>Выручка по дням</b><div style="display:flex;align-items:flex-end;margin-top:8px;height:86px"><div style="flex:1;text-align:center"><div style="height:48px;background:#1B3A9E;border-radius:6px 6px 0 0;margin:0 3px"></div><span style="font-size:9px;color:#5B6585">Пн</span></div><div style="flex:1;text-align:center"><div style="height:56px;background:#1B3A9E;border-radius:6px 6px 0 0;margin:0 3px"></div><span style="font-size:9px;color:#5B6585">Вт</span></div><div style="flex:1;text-align:center"><div style="height:42px;background:#1B3A9E;border-radius:6px 6px 0 0;margin:0 3px"></div><span style="font-size:9px;color:#5B6585">Ср</span></div><div style="flex:1;text-align:center"><div style="height:62px;background:#1B3A9E;border-radius:6px 6px 0 0;margin:0 3px"></div><span style="font-size:9px;color:#5B6585">Чт</span></div><div style="flex:1;text-align:center"><div style="height:70px;background:#1B3A9E;border-radius:6px 6px 0 0;margin:0 3px"></div><span style="font-size:9px;color:#5B6585">Пт</span></div><div style="flex:1;text-align:center"><div style="height:18px;background:#1B3A9E;border-radius:6px 6px 0 0;margin:0 3px"></div><span style="font-size:9px;color:#5B6585">Сб</span></div><div style="flex:1;text-align:center"><div style="height:8px;background:#1B3A9E;border-radius:6px 6px 0 0;margin:0 3px"></div><span style="font-size:9px;color:#5B6585">Вс</span></div></div></div><div class="row2" style="margin-top:8px;gap:8px"><div class="card sp"><b>Топ блюд:</b> 🌭 480 · 🥟 410 · 🥐 395</div><span class="btn sm" style="display:inline-block;background:#fff;border:1px solid #E3E6EE">Excel</span><span class="btn sm o" style="display:inline-block">PDF</span></div></div></div><div class="d"><p class="lead">Цифры за период для менеджера и руководства.</p><h4>На экране</h4><ul><li>Период: сегодня, неделя, месяц; фильтр по корпусу</li><li>Выручка, заказы, средний чек, возвраты</li><li>График выручки по дням</li><li>Топ блюд</li><li>Скачать в Excel или PDF</li></ul><p class="n" style="margin-top:12px">Можно сравнить корпуса и увидеть, в какие дни и часы очередь самая большая.</p></div></div>
+<div class="item" data-g="Персонал и настройки" data-title="Персонал" data-badge="Изменён"><div class="adm fr" data-p="Персонал"><div class="main"><div class="row2"><div class="h" style="margin:0">Персонал</div><span class="sp"></span><span class="btn sm o" style="display:inline-block">+ Сотрудник</span></div><table class="tb" style="margin-top:10px"><tr><th>Сотрудник</th><th>Роль</th><th>Корпус</th><th>Смена</th><th>Статус</th></tr><tr><td>Айгерим</td><td>Кассир</td><td>Главный</td><td>8:00–16:00</td><td><span class="g">На смене</span></td></tr><tr><td>Данияр</td><td>Повар</td><td>Главный</td><td>8:00–16:00</td><td><span class="g">На смене</span></td></tr><tr><td>Мадина</td><td>Выдача</td><td>Корпус Б</td><td>9:00–17:00</td><td><span class="g">На смене</span></td></tr><tr><td>Ержан</td><td>Менеджер</td><td>Корпус С</td><td>—</td><td><span class="tag">Выходной</span></td></tr></table><div class="card" style="margin-top:8px"><b>+ Сотрудник:</b> <span style="color:#5B6585">имя, почта, роль (кассир, повар, выдача, менеджер), корпус и касса, график. Роль можно сменить, доступ — отключить.</span></div></div></div><div class="d"><p class="lead">Кто работает и какие у него права.</p><h4>На экране</h4><ul><li>Роль, корпус, график и статус «На смене»</li><li>Кнопка «+ Сотрудник» создаёт аккаунт с нужной ролью</li><li>Смена роли, корпуса, графика и отключение доступа</li></ul><p class="n" style="margin-top:12px">Роль выдаёт только администратор. Сотрудник сам её изменить не может.</p></div></div>
+<div class="item" data-g="Персонал и настройки" data-title="Журнал действий" data-badge="Новый"><div class="adm fr" data-p="Журнал"><div class="main"><div class="row2"><div class="h" style="margin:0">Журнал действий</div><span class="sp"></span><span class="chip mini" style="margin-right:5px">🔍 Поиск</span><span class="chip mini" style="margin-right:5px">Все сотрудники ▾</span></div><table class="tb" style="margin-top:10px"><tr><th>Время</th><th>Кто</th><th>Действие</th><th>Что</th></tr><tr><td>14:20</td><td>Ержан</td><td>Стоп-лист</td><td>Бургер, Корпус С</td></tr><tr><td>13:58</td><td>Админ</td><td>Цена</td><td>Хот-дог 600 → 650 ₸</td></tr><tr><td>13:41</td><td>Айгерим</td><td>Возврат</td><td>Г-127 · 650 ₸</td></tr><tr><td>12:10</td><td>Админ</td><td>Роль</td><td>Данияр: Выдача → Повар</td></tr><tr><td>11:02</td><td>Айгерим</td><td>Приход</td><td>Самса +50</td></tr></table><p style="margin-top:8px;color:#5B6585">Записи нельзя редактировать и удалять.</p></div></div><div class="d"><p class="lead">История всех важных действий в системе.</p><h4>На экране</h4><ul><li>Время, кто сделал, что и над чем</li><li>Фильтр по сотруднику и поиск</li><li>Цены, возвраты, стоп-лист, роли, приход и списание</li></ul><p class="n" style="margin-top:12px">Если что-то изменилось и непонятно кто, ответ здесь.</p></div></div>
+<div class="item" data-g="Персонал и настройки" data-title="Корпуса и часы работы" data-badge="Новый"><div class="adm fr" data-p="Корпуса"><div class="main"><div class="row2"><div class="h" style="margin:0">Корпуса</div><span class="sp"></span><span class="btn sm o" style="display:inline-block">Сохранить</span></div><div style="margin-top:10px"><div class="card" style="margin-bottom:6px"><div class="row2"><b>Главный</b><span style="color:#5B6585">8:00–17:00 · 3 кассы</span><span class="sp"></span><span style="color:#5B6585">Приём заказов</span><span class="tg on"></span></div></div><div class="card" style="margin-bottom:6px"><div class="row2"><b>Корпус Б</b><span style="color:#5B6585">9:00–17:00 · 2 кассы</span><span class="sp"></span><span style="color:#5B6585">Приём заказов</span><span class="tg on"></span></div></div><div class="card" style="margin-bottom:6px"><div class="row2"><b>Корпус С</b><span style="color:#5B6585">9:00–16:00 · 1 касса</span><span class="sp"></span><span style="color:#5B6585">Приём заказов</span><span class="tg"></span></div></div></div><div class="card" style="margin-top:4px"><b>Выходные и праздники</b> <span style="color:#5B6585">— закрыть корпуса на выбранные даты</span></div></div></div><div class="d"><p class="lead">Настройки каждой столовой.</p><h4>На экране</h4><ul><li>Часы работы и число касс</li><li>Переключатель «Приём заказов»: можно срочно остановить онлайн-заказы (например, при аварии)</li><li>Выходные и праздники</li></ul><p class="n" style="margin-top:12px">Когда приём выключен, студент видит на меню, что корпус закрыт.</p></div></div>
+</section>
+<section class="doc" id="d">
+<h3>1. Архитектура</h3>
+<pre>Студент (Flutter)  Сотрудник (Flutter/веб)  Админ (Django)
+        \                 |                   /
+         HTTPS REST + WebSocket (Django Channels)
+                          |
+            BACKEND: Python + Django + DRF
+          /        |          |          \
+  PostgreSQL     Redis   Kaspi Pay    Firebase (push)
+ (меню, заказы,  (realtime,  (оплата)   (уведомления)
+  остатки)       очереди)</pre>
+<p>Все изменения идут через один backend. Последний бургер купили → остаток 0 → блюдо автоматически «Закончилось» → WebSocket обновляет меню у всех студентов этого корпуса. Списание остатка делается в одной транзакции базы, чтобы два студента не купили последнюю порцию.</p>
+<h3>2. На чём пишем</h3>
+<ul><li><b>Приложение:</b> Dart + Flutter. Один код для Android и iOS. Студент, касса, кухня, выдача: роли в одном приложении.</li><li><b>Backend:</b> Python + Django + Django REST Framework + Channels (realtime).</li><li><b>Админка:</b> Django Admin, доработанный под роли и корпуса. Самый быстрый путь для новичка.</li><li><b>Экран кухни и выдачи:</b> веб-страницы Django, открываются в браузере планшета или ТВ.</li><li><b>База:</b> PostgreSQL. <b>Кэш/очереди:</b> Redis. <b>Push:</b> Firebase Cloud Messaging (бесплатно).</li><li><b>Инструменты:</b> VS Code (расширения Python, Dart, Flutter), Android Studio (эмулятор), Git + GitHub, Postman, Docker.</li></ul>
+<h3>3. Структура проекта</h3>
+<pre>atu-food/
+ backend/   accounts  canteens  menu  orders
+            payments  bonuses  stock  reports  realtime
+ mobile/lib/features/  auth menu cart orders
+            bonuses staff(cashier, kitchen, pickup)
+ web/       kds.html  pickup_board.html
+ deploy/    docker-compose.yml  nginx.conf</pre>
+<h3>4. Таблицы базы (добавлено)</h3>
+<p>profiles(role), canteens, staff(роль, корпус, смена), categories, dishes, canteen_dishes(цена, остаток, мин. остаток), modifiers, combos, promo_codes, orders, order_items, payments, bonus_transactions, stock_movements(приход/списание), shifts, fcm_tokens, audit_log (кто что менял).</p>
+<h3>5. Платежи</h3>
+<p>Kaspi Pay требует договор с Kaspi на юрлицо или ИП (его оформляет университет или вы). До договора работает запасной вариант: кассир вручную подтверждает оплату картой по QR. После договора оплата идёт из приложения, backend получает подтверждение и сам отправляет заказ на кухню. Комиссию уточните у Kaspi.</p>
+<h3>6. Домен и сервер</h3>
+<ul><li><b>Домен:</b> atufood.kz. Для .kz сервер обязан быть в Казахстане.</li><li><b>Сервер:</b> VPS в Казахстане (ps.kz, hoster.kz, Timeweb Cloud KZ): 2 vCPU, 4 ГБ RAM, 40+ ГБ SSD, Ubuntu. Данные студентов тоже будут храниться в КЗ, это важно для закона о персональных данных.</li><li><b>Доп.:</b> SSL Let's Encrypt (бесплатно), ежедневные бэкапы базы.</li></ul>
+<h3>7. Сколько это стоит (оценка)</h3>
+<div class="tw"><table><tr><th>Статья</th><th>Сумма</th></tr>
+<tr><td>Google Play (аккаунт разработчика, разово, $25)</td><td>≈ 12 500 ₸</td></tr>
+<tr><td>Apple Developer Program ($99 в год)</td><td>≈ 50 000 ₸/год</td></tr>
+<tr><td>Домен .kz</td><td>≈ 5–10 тыс. ₸/год</td></tr>
+<tr><td>VPS в КЗ (4 ГБ)</td><td>≈ 10–15 тыс. ₸/мес</td></tr>
+<tr><td>Бэкапы и хранилище фото</td><td>≈ 3 тыс. ₸/мес</td></tr>
+<tr><td>SSL, Firebase push, GitHub</td><td>0 ₸</td></tr>
+</table></div>
+<p style="margin-top:8px"><b>Пилот:</b> Android, один корпус, 3 месяца ≈ 12 500 + 8 000 + 3×13 000 ≈ <b>60 тыс. ₸</b>.<br/><b>Полный запуск:</b> iOS + Android, три корпуса, первый год ≈ 50 000 + 12 500 + 8 000 + 12×16 000 ≈ <b>260 тыс. ₸</b>, дальше около 20–25 тыс. ₸/мес (VPS) и 50 тыс. ₸/год (Apple). Если разработку делаете сами, остальное не нужно; наём команды обойдётся от нескольких миллионов ₸. Цены ориентировочные, актуальные проверьте на сайтах хостеров и магазинов.</p>
+<h3>8. Публикация в магазинах</h3>
+<ul><li><b>Google Play:</b> аккаунт $25 один раз. Для нового личного аккаунта Google требует закрытое тестирование: 12 тестеров на 14 дней. Проверка приложения обычно от 1 до 7 дней.</li><li><b>App Store:</b> $99 в год, нужен Mac или облачная сборка, проверка 1–3 дня. Нужны политика конфиденциальности, скриншоты и тестовый аккаунт для проверяющих.</li><li><b>Если сроки поджимают:</b> сначала Android или PWA, iOS позже.</li></ul>
+<h3>9. План работ</h3>
+<ul><li><b>Недели 1–4:</b> backend, база, меню, заказы, остатки.</li><li><b>5–8:</b> приложение студента (Flutter).</li><li><b>9–10:</b> касса, кухня, выдача, realtime.</li><li><b>11–12:</b> Kaspi, push, бонусы.</li><li><b>13–14:</b> админка, отчёты, пилот в одном корпусе.</li><li><b>15+:</b> два других корпуса, публикация в магазинах.</li></ul>
+</section>
+<div class="note"><b style="color:var(--fg)">Вход один для всех:</b> роль (студент, сотрудник, админ) задаётся аккаунту, и после входа открывается нужный интерфейс. <b style="color:var(--fg)">Админка:</b> 12 экранов, включая комментарии студентов, бонусы, отчёты и журнал действий.</div>
+
+<script>
+/* боковое меню админки (как было) */
+var N=['Дашборд','Меню','Склад','Заказы','Комментарии','Бонусы','Отчёты','Персонал','Журнал','Корпуса'];
+document.querySelectorAll('.adm[data-p]').forEach(function(a){var d=document.createElement('div');d.className='side';d.innerHTML='<b style="font-size:13px">ATU Food</b><div style="margin-top:14px"></div>'+N.map(function(n){return '<div'+(n===a.dataset.p?' class="on"':'')+'>'+n+(n==='Комментарии'?'<em style="float:right;font-style:normal;background:#D64545;color:#fff;border-radius:99px;padding:0 6px;font-size:9px;line-height:15px">5</em>':'')+'</div>'}).join('');a.insertBefore(d,a.firstChild)});
+
+/* вкладки */
+var tb=document.querySelectorAll('#tabs button');
+tb.forEach(function(x){x.onclick=function(){
+ tb.forEach(function(y){y.classList.toggle('on',y===x)});
+ document.querySelectorAll('section').forEach(function(r){r.classList.toggle('on',r.id===x.dataset.t)});
+ fitAll();
+}});
+
+/* просмотрщик экранов */
+var viewers=[];
+function esc(s){return s}
+function build(sec){
+ var items=[].slice.call(sec.querySelectorAll(':scope>.item')).map(function(it){
+  return {g:it.dataset.g,t:it.dataset.title,b:it.dataset.badge||'',frame:it.querySelector('.fr'),d:it.querySelector('.d').innerHTML};
+ });
+ var groups=[];items.forEach(function(x){if(groups.indexOf(x.g)<0)groups.push(x.g)});
+ var cur=0,ovOn=false;
+ var wrap=document.createElement('div');
+ wrap.innerHTML=
+  '<div class="gbar"></div>'+
+  '<div class="vgrid"><aside class="list"></aside><div class="vmain">'+
+   '<div class="vhead"><span class="num"></span><h2></h2><span class="bd" style="display:none"></span></div>'+
+   '<div class="content"><div class="stage"></div><div class="desc"></div></div>'+
+   '<div class="pn"><button class="pv">← Назад</button><div class="dots"></div><span></span><button class="nx">Дальше →</button></div>'+
+  '</div></div><div class="ov"></div>';
+ sec.appendChild(wrap);
+ var gbar=wrap.querySelector('.gbar'),list=wrap.querySelector('.list'),vg=wrap.querySelector('.vgrid'),ov=wrap.querySelector('.ov');
+ var stage=wrap.querySelector('.stage'),desc=wrap.querySelector('.desc'),num=wrap.querySelector('.num'),h2=wrap.querySelector('h2'),bd=wrap.querySelector('.vhead .bd');
+ var pv=wrap.querySelector('.pv'),nx=wrap.querySelector('.nx'),dots=wrap.querySelector('.dots'),cnt=wrap.querySelector('.pn>span');
+
+ groups.forEach(function(g){var b=document.createElement('button');b.textContent=g;b.onclick=function(){go(items.findIndex(function(x){return x.g===g}));showOv(false)};b.dataset.g=g;gbar.appendChild(b)});
+ var ovb=document.createElement('button');ovb.className='ovb';ovb.textContent='▦ Все экраны';ovb.onclick=function(){showOv(!ovOn)};gbar.appendChild(ovb);
+
+ var lastG=null;
+ items.forEach(function(x,i){
+  if(x.g!==lastG){var h=document.createElement('div');h.className='gh';h.textContent=x.g;list.appendChild(h);lastG=x.g}
+  var b=document.createElement('button');b.innerHTML='<i>'+(i+1)+'</i><span>'+x.t+'</span>'+(x.b?'<em class="bd" style="font-style:normal">'+x.b+'</em>':'');
+  b.onclick=function(){go(i);showOv(false)};list.appendChild(b);
+  var dd=document.createElement('i');dots.appendChild(dd);
+ });
+
+ items.forEach(function(x,i){
+  var c=document.createElement('div');c.className='oc'+(x.frame.classList.contains('adm')?' wd':'');
+  var p=document.createElement('div');p.className='pv';var f=x.frame.cloneNode(true);f.style.zoom=x.frame.classList.contains('adm')?'.5':'.5';p.appendChild(f);
+  c.appendChild(p);c.insertAdjacentHTML('beforeend','<b>'+(i+1)+'. '+x.t+'</b><span>'+x.g+(x.b?' · '+x.b:'')+'</span>');
+  c.onclick=function(){go(i);showOv(false)};ov.appendChild(c);
+ });
+
+ function zoomFor(frame){
+  var isA=frame.classList.contains('adm'),base=isA?660:262;
+  var avail=wrap.querySelector('.vmain').clientWidth||320;
+  return Math.max(.4,Math.min(isA?1.25:1.12,avail/base));
+ }
+ function go(n){
+  cur=Math.max(0,Math.min(items.length-1,n));var x=items[cur];
+  stage.innerHTML='';var f=x.frame.cloneNode(true);f.style.zoom=zoomFor(x.frame);stage.appendChild(f);
+  desc.innerHTML=x.d+'';num.textContent='Экран '+(cur+1)+' из '+items.length;h2.textContent=x.t;
+  bd.style.display=x.b?'inline-block':'none';bd.textContent=x.b;
+  [].forEach.call(list.querySelectorAll('button'),function(b,i){b.classList.toggle('on',i===cur)});
+  [].forEach.call(gbar.querySelectorAll('button[data-g]'),function(b){b.classList.toggle('on',b.dataset.g===x.g)});
+  [].forEach.call(dots.children,function(d,i){d.classList.toggle('on',i===cur)});
+  pv.disabled=cur===0;nx.disabled=cur===items.length-1;cnt.textContent=x.g;
+  var on=list.querySelector('button.on');if(on&&on.scrollIntoView&&window.innerWidth<=860)on.scrollIntoView({block:'nearest',inline:'center'});
+ }
+ function showOv(v){ovOn=v;ov.classList.toggle('on',v);vg.classList.toggle('off',v);ovb.textContent=v?'← К экрану':'▦ Все экраны';ovb.classList.toggle('on',v)}
+ pv.onclick=function(){go(cur-1)};nx.onclick=function(){go(cur+1)};
+ var sx=null;stage.addEventListener('touchstart',function(e){sx=e.touches[0].clientX},{passive:true});
+ stage.addEventListener('touchend',function(e){if(sx===null)return;var dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>50)go(cur+(dx<0?1:-1));sx=null});
+ viewers.push({sec:sec,go:go,cur:function(){return cur},ovOn:function(){return ovOn},refit:function(){if(sec.classList.contains('on'))go(cur)}});
+ go(0);
+}
+document.querySelectorAll('section.row').forEach(build);
+function fitAll(){viewers.forEach(function(v){v.refit()})}
+window.addEventListener('resize',fitAll);
+document.addEventListener('keydown',function(e){
+ if(e.key!=='ArrowRight'&&e.key!=='ArrowLeft')return;
+ viewers.forEach(function(v){if(v.sec.classList.contains('on')&&!v.ovOn()){v.go(v.cur()+(e.key==='ArrowRight'?1:-1))}});
+});
+</script>
+</body>
+</html>
